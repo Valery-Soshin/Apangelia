@@ -1,1 +1,5 @@
-<Solution />
+<Solution>
+  <Project Path="Apangelia.AppHost/Apangelia.AppHost.csproj" Id="377bda54-33d6-4f54-8e38-5b62f6eecb3d" />
+  <Project Path="Apangelia.ServiceDefaults/Apangelia.ServiceDefaults.csproj" />
+  <Project Path="Apangelia.WebApi/Apangelia.WebApi.csproj" />
+</Solution>
