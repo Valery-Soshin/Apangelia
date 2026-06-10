@@ -5,10 +5,11 @@
     <File Path="Directory.Packages.props" />
     <File Path="README.md" />
   </Folder>
-  <Project Path="Apangelia.AppHost/Apangelia.AppHost.csproj" Id="377bda54-33d6-4f54-8e38-5b62f6eecb3d" />
-  <Project Path="Apangelia.Application/Apangelia.Application.csproj" />
-  <Project Path="Apangelia.Core/Apangelia.Core.csproj" Id="204a3fb4-ff36-49f7-9fdd-94019f51a68f" />
-  <Project Path="Apangelia.Persistence.Postgres/Apangelia.Persistence.Postgres.csproj" Id="7ef7c074-4532-4f73-87de-adae461c1ce0" />
-  <Project Path="Apangelia.ServiceDefaults/Apangelia.ServiceDefaults.csproj" />
-  <Project Path="Apangelia.WebApi/Apangelia.WebApi.csproj" />
+  <Project Path="src/Apangelia.AppHost/Apangelia.AppHost.csproj" Id="377bda54-33d6-4f54-8e38-5b62f6eecb3d" />
+  <Project Path="src/Apangelia.Application/Apangelia.Application.csproj" />
+  <Project Path="src/Apangelia.Core/Apangelia.Core.csproj" Id="204a3fb4-ff36-49f7-9fdd-94019f51a68f" />
+  <Project Path="src/Apangelia.Integrations.GitHub/Apangelia.Integrations.GitHub.csproj" />
+  <Project Path="src/Apangelia.Persistence.Postgres/Apangelia.Persistence.Postgres.csproj" Id="7ef7c074-4532-4f73-87de-adae461c1ce0" />
+  <Project Path="src/Apangelia.ServiceDefaults/Apangelia.ServiceDefaults.csproj" />
+  <Project Path="src/Apangelia.WebApi/Apangelia.WebApi.csproj" />
 </Solution>
