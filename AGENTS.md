@@ -1,10 +1,26 @@
 # Repository Instructions
 
-## Git Commit Messages
+## Working Style
 
-When creating Git commits, follow Conventional Commits 1.0.0.
+Read the existing code before changing it and keep edits scoped to the user's request. Prefer the repository's current structure and conventions over introducing new patterns.
 
-Use the format:
+This is a .NET solution with Aspire-style projects. Treat `Apangelia.AppHost`, `Apangelia.ServiceDefaults`, and `Apangelia.WebApi` as coordinated parts of the same application unless the task says otherwise.
+
+Do not introduce new frameworks, persistence layers, background job systems, or architectural layers unless the current task clearly needs them. When adding dependencies, explain why they are needed.
+
+Use normal .NET configuration patterns: `appsettings*.json`, environment variables, dependency injection, and typed options when configuration grows beyond a one-off value. Do not log secrets or put secrets in committed config files.
+
+Prefer async APIs for I/O-bound work, include `CancellationToken` on cancellable async boundaries, and use structured logging for operational messages.
+
+## Verification
+
+For code changes, run the narrowest useful build or test command before finishing. If verification cannot be run, say why.
+
+When adding tests, match the test framework already used by the repository. If no test project exists yet, ask or keep the change small enough that a build is the main verification step.
+
+## Git
+
+When creating commits, follow Conventional Commits 1.0.0:
 
 ```text
 <type>[optional scope]: <description>
@@ -14,24 +30,6 @@ Use the format:
 [optional footer(s)]
 ```
 
-Prefer common types such as `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, and `chore`. Use `!` after the type/scope or a `BREAKING CHANGE:` footer for breaking changes. Keep the description imperative, concise, and lowercase unless a proper noun requires capitalization.
+Prefer common types such as `feat`, `fix`, `docs`, `refactor`, `test`, `build`, `ci`, and `chore`. Keep the description imperative, concise, and lowercase unless a proper noun requires capitalization.
 
-## .NET Defaults
-
-Treat these as default .NET preferences unless a repository's existing conventions or local instructions say otherwise. Prefer nullable reference types, dependency injection over service location or static global state, async APIs for I/O-bound work, `Async` suffixes for asynchronous method names, `CancellationToken` on cancellable async boundaries, structured logging without secrets, and typed options for configuration.
-
-When working in .NET projects, prefer xUnit for tests unless the repository already standardizes on another framework. Keep tests focused on observable behavior and use clear arrange/act/assert structure.
-
-Prefer clean layered architecture: domain/core code should stay dependency-light, application code should own use-case orchestration and contracts, and infrastructure code should contain framework, SDK, database, HTTP, file system, and platform-specific adapters.
-
-For ASP.NET Core APIs, prefer controller-based endpoints over Minimal API endpoints unless the repository already standardizes on Minimal APIs or the task explicitly calls for them. Keep environment-specific configuration in `appsettings*.json`, environment variables, and the normal .NET configuration pipeline; bind typed settings through the Options pattern with `IOptions<T>`, `IOptionsSnapshot<T>`, or `IOptionsMonitor<T>` instead of scattering raw configuration reads through the codebase. Enable OpenAPI documentation for APIs, using Swagger UI when appropriate for local development and diagnostics.
-
-For data access, prefer Entity Framework Core as the default ORM choice when the project does not already standardize on another data access approach. Respect existing choices such as Dapper, raw SQL, document databases, or provider-specific SDKs when they are already established.
-
-For background jobs and task scheduling, prefer Hangfire when the application needs persistent jobs, retries, delayed or recurring execution, and operational visibility. For simple in-process background work, use `BackgroundService` or `IHostedService` when that better fits the scope.
-
-Use C# type shapes intentionally. Prefer `record`/`record struct` for immutable value-oriented models and sealed classes/records when inheritance is not part of the design. Avoid using classes by default when a smaller value type or record better communicates intent.
-
-Name private fields with a leading underscore and camelCase, for example `_service` and `_settings`. Do not add leading underscores to locals, parameters, properties, constants, or public/protected/internal members.
-
-Avoid trailing whitespace and keep file endings tidy: no extra spaces at the end of lines and no unnecessary blank lines at the end of files.
+Do not commit local tool state. Serena project configuration may be committed, but `.serena/cache` and `.serena/project.local.yml` must stay ignored.
