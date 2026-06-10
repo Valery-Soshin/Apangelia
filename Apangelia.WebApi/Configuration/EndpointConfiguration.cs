@@ -6,7 +6,7 @@ public static class EndpointConfiguration
 {
     public static IEndpointRouteBuilder MapEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapTestEndpoints();
+        app.MapWebhookEndpoints();
 
         return app;
     }
