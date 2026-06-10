@@ -4,13 +4,31 @@
 
 Read the existing code before changing it and keep edits scoped to the user's request. Prefer the repository's current structure and conventions over introducing new patterns.
 
-This is a .NET solution with Aspire-style projects. Treat `Apangelia.AppHost`, `Apangelia.ServiceDefaults`, and `Apangelia.WebApi` as coordinated parts of the same application unless the task says otherwise.
+This is a .NET solution with Aspire-style projects. Treat the projects as coordinated parts of the same application unless the task says otherwise.
 
 Do not introduce new frameworks, persistence layers, background job systems, or architectural layers unless the current task clearly needs them. When adding dependencies, explain why they are needed.
 
 Use normal .NET configuration patterns: `appsettings*.json`, environment variables, dependency injection, and typed options when configuration grows beyond a one-off value. Do not log secrets or put secrets in committed config files.
 
 Prefer async APIs for I/O-bound work, include `CancellationToken` on cancellable async boundaries, and use structured logging for operational messages.
+
+## Project Architecture
+
+`Apangelia.AppHost` is the Aspire orchestration entry point. Keep it focused on composing runnable services and infrastructure resources; do not put application behavior there.
+
+`Apangelia.ServiceDefaults` holds shared service-host defaults such as health checks, service discovery, HTTP resilience, logging, and OpenTelemetry. Reference it from runnable service projects that need those defaults, not from domain or infrastructure libraries.
+
+`Apangelia.WebApi` is the HTTP composition root. Keep routing, request/response concerns, OpenAPI setup, and endpoint registration here. Thin endpoints should delegate non-trivial webhook handling, validation, persistence, and integration work to `Apangelia.Application`.
+
+`Apangelia.Application` is the use-case layer. Put application services, commands/queries, workflow orchestration, validation that is not HTTP-specific, and ports for persistence or external integrations here. It may depend on `Apangelia.Core`; keep it independent of ASP.NET Core, Aspire, concrete database providers, and external API SDKs.
+
+`Apangelia.Core` is the intended home for domain model, domain contracts, and business rules. Keep it independent of ASP.NET Core, Aspire, database providers, external API SDKs, and application orchestration unless there is a deliberate architectural change.
+
+`Apangelia.Integrations.GitHub` is the boundary for GitHub-specific behavior such as webhook payload models, signature verification, API clients, and GitHub mapping logic. Use it to implement application ports; keep GitHub details out of `Apangelia.Application` and `Apangelia.Core` except for neutral contracts or domain concepts.
+
+`Apangelia.Persistence.Postgres` is the boundary for PostgreSQL persistence. Keep provider-specific storage code here and expose it by implementing abstractions that `Apangelia.Application` can consume.
+
+Prefer dependency flow from hosts/adapters inward: `AppHost` composes services, `WebApi` wires features, integration and persistence projects implement external boundaries, `Application` orchestrates use cases, and `Core` stays the most independent project. Update `Apangelia.slnx` and project references together when adding or wiring projects.
 
 ## Verification
 
