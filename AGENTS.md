@@ -12,6 +12,16 @@ Use normal .NET configuration patterns: `appsettings*.json`, environment variabl
 
 Prefer async APIs for I/O-bound work, include `CancellationToken` on cancellable async boundaries, and use structured logging for operational messages.
 
+## Comments and Documentation
+
+Write all new and updated code comments in Russian, including XML documentation comments.
+
+Cover public entities and contracts with useful XML comments when they are part of the repository's public or cross-layer surface: interfaces, DTOs, options, public records/classes/enums, and public members that define a contract.
+
+Do not duplicate comments on simple implementation classes when the implemented contract is already documented. Add implementation comments only when the implementation exposes additional public behavior, constraints, or non-obvious details not covered by the contract.
+
+Keep comments purposeful: document intent, contract expectations, invariants, and edge cases rather than restating names or obvious code.
+
 ## Project Architecture
 
 `Apangelia.AppHost` is the Aspire orchestration entry point. Keep it focused on composing runnable services and infrastructure resources; do not put application behavior there.
