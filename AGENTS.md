@@ -12,6 +12,8 @@ Use normal .NET configuration patterns: `appsettings*.json`, environment variabl
 
 Prefer async APIs for I/O-bound work, include `CancellationToken` on cancellable async boundaries, and use structured logging for operational messages.
 
+Use file-scoped namespaces in every C# file: declare namespaces as `namespace Apangelia.SomeProject;` and do not use block-scoped `namespace ... { }` declarations.
+
 ## Comments and Documentation
 
 Write all new and updated code comments in Russian, including XML documentation comments.
