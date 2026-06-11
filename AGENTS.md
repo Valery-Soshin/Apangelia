@@ -14,6 +14,8 @@ Prefer async APIs for I/O-bound work, include `CancellationToken` on cancellable
 
 Use file-scoped namespaces in every C# file: declare namespaces as `namespace Apangelia.SomeProject;` and do not use block-scoped `namespace ... { }` declarations.
 
+Use `record` for DTOs and other immutable data carriers. Use `class` for mutable entities and objects with identity or lifecycle.
+
 ## Comments and Documentation
 
 Write all new and updated code comments in Russian, including XML documentation comments.
