@@ -6,7 +6,7 @@ Read the existing code before changing it and keep edits scoped to the user's re
 
 This is a .NET solution with Aspire-style projects. Treat the projects as coordinated parts of the same application unless the task says otherwise.
 
-Do not introduce new frameworks, persistence layers, background job systems, or architectural layers unless the current task clearly needs them. When adding dependencies, explain why they are needed.
+Do not introduce new frameworks, persistence layers, background job systems, or architectural layers unless the current task clearly needs them. When adding dependencies, explain why they are needed, especially for infrastructure packages. Keep package versions centralized in `Directory.Packages.props`.
 
 Use normal .NET configuration patterns: `appsettings*.json`, environment variables, dependency injection, and typed options when configuration grows beyond a one-off value. Do not log secrets or put secrets in committed config files.
 
@@ -18,7 +18,7 @@ Use file-scoped namespaces in every C# file: declare namespaces as `namespace Ap
 
 Write all new and updated code comments in Russian, including XML documentation comments.
 
-Cover public entities and contracts with useful XML comments when they are part of the repository's public or cross-layer surface: interfaces, DTOs, options, public records/classes/enums, and public members that define a contract.
+Cover public entities and contracts with useful XML comments when they are part of the repository's public or cross-layer surface: interfaces, DTOs, options, public records/classes/enums, and public members that define a contract. This includes domain notification contracts such as provider interfaces, event input records, deliveries, and send results.
 
 Do not duplicate comments on simple implementation classes when the implemented contract is already documented. Add implementation comments only when the implementation exposes additional public behavior, constraints, or non-obvious details not covered by the contract.
 
@@ -26,11 +26,11 @@ Keep comments purposeful: document intent, contract expectations, invariants, an
 
 ## Project Architecture
 
-`Apangelia.AppHost` is the Aspire orchestration entry point. Keep it focused on composing runnable services and infrastructure resources; do not put application behavior there.
+`Apangelia.AppHost` is the Aspire orchestration entry point. Keep it focused on composing runnable services and infrastructure resources, including Aspire-managed PostgreSQL; do not put application behavior there. Do not commit real database credentials or other secret resource parameters.
 
 `Apangelia.ServiceDefaults` holds shared service-host defaults such as health checks, service discovery, HTTP resilience, logging, and OpenTelemetry. Reference it from runnable service projects that need those defaults, not from domain or infrastructure libraries.
 
-`Apangelia.WebApi` is the HTTP composition root. Keep routing, request/response concerns, OpenAPI setup, and endpoint registration here. Thin endpoints should delegate non-trivial webhook handling, validation, persistence, and integration work to `Apangelia.Application`.
+`Apangelia.WebApi` is the HTTP composition root. Keep routing, request/response concerns, OpenAPI setup, and endpoint registration here. The `Configurations` extension-method classes are the wiring layer for dependency injection, middleware, Swagger, Entity Framework, and endpoint mapping; keep business behavior out of them. Thin endpoints should delegate non-trivial webhook handling, validation, persistence, and integration work to `Apangelia.Application`.
 
 `Apangelia.Application` is the use-case layer. Put application services, commands/queries, workflow orchestration, validation that is not HTTP-specific, and ports for persistence or external integrations here. It may depend on `Apangelia.Core`; keep it independent of ASP.NET Core, Aspire, concrete database providers, and external API SDKs.
 
@@ -38,13 +38,15 @@ Keep comments purposeful: document intent, contract expectations, invariants, an
 
 `Apangelia.Integrations.GitHub` is the boundary for GitHub-specific behavior such as webhook payload models, signature verification, API clients, and GitHub mapping logic. Use it to implement application ports; keep GitHub details out of `Apangelia.Application` and `Apangelia.Core` except for neutral contracts or domain concepts.
 
-`Apangelia.Persistence.Postgres` is the boundary for PostgreSQL persistence. Keep provider-specific storage code here and expose it by implementing abstractions that `Apangelia.Application` can consume.
+`Apangelia.Persistence.Postgres` is the boundary for PostgreSQL persistence. Keep EF Core `DbContext`, migrations, Npgsql mapping, and provider-specific storage code here, then expose them by implementing abstractions that `Apangelia.Application` can consume. Registration and migration application may be wired from `Apangelia.WebApi`, but `Apangelia.Application` and `Apangelia.Core` must not depend on EF Core or Npgsql.
 
 Prefer dependency flow from hosts/adapters inward: `AppHost` composes services, `WebApi` wires features, integration and persistence projects implement external boundaries, `Application` orchestrates use cases, and `Core` stays the most independent project. Update `Apangelia.slnx` and project references together when adding or wiring projects.
 
 ## Verification
 
 For code changes, run the narrowest useful build or test command before finishing. If verification cannot be run, say why.
+
+For docs-only changes to this file, inspect `git diff -- AGENTS.md` and run `git diff --check`; a build is not required unless code or project files were also changed.
 
 When adding tests, match the test framework already used by the repository. If no test project exists yet, ask or keep the change small enough that a build is the main verification step.
 
