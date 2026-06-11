@@ -1,4 +1,6 @@
-﻿namespace Apangelia.WebApi.Endpoints;
+﻿using Apangelia.Core;
+
+namespace Apangelia.WebApi.Endpoints;
 
 public static class WebhookEndpoints
 {
@@ -18,7 +20,6 @@ public static class WebhookEndpoints
         using var reader = new StreamReader(request.Body);
         var body = await reader.ReadToEndAsync(cancellationToken);
 
-        // todo отправить в сервис для обработки
 
         return Results.Ok();
     }

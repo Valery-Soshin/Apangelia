@@ -1,22 +1,13 @@
-using Apangelia.WebApi.Configuration;
+using Apangelia.WebApi.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddServiceDefaults();
-
-builder.Services.AddControllers();
-
-builder.Services.AddOpenApi();
+// Добавляем сервисы в контейнер зависимостей
+builder.AddConfiguration();
 
 var app = builder.Build();
 
-app.MapDefaultEndpoints();
-
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
-app.MapEndpoints();
+// Настраиваем конвейер обработки HTTP-запросов
+app.UseConfiguration();
 
 app.Run();

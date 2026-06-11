@@ -9,4 +9,8 @@
     <ProjectReference Include="..\Apangelia.WebApi\Apangelia.WebApi.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" />
+  </ItemGroup>
+
 </Project>

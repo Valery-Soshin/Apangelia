@@ -1,6 +1,6 @@
 ﻿using Apangelia.WebApi.Endpoints;
 
-namespace Apangelia.WebApi.Configuration;
+namespace Apangelia.WebApi.Configurations;
 
 public static class EndpointConfiguration
 {
