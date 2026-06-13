@@ -15,6 +15,7 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.2" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.15.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.1" />
+    <PackageVersion Include="StreamJsonRpc" Version="2.25.28" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.2.1" />
   </ItemGroup>
 </Project>
