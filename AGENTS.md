@@ -10,9 +10,19 @@ Do not introduce new frameworks, persistence layers, background job systems, or 
 
 Use normal .NET configuration patterns: `appsettings*.json`, environment variables, dependency injection, and typed options when configuration grows beyond a one-off value. Do not log secrets or put secrets in committed config files.
 
+Do not add constructor null checks for dependencies provided by dependency injection. Rely on DI container validation and nullable annotations for required services; reserve explicit null validation for non-DI inputs and public API boundaries.
+
+For options classes, keep configuration values immutable after binding: use `required` properties with `init` setters. Do not add section-name constants to options types for one-off bindings; bind the configuration section explicitly from the composition root.
+
+Do not unwrap `IOptions<TOptions>` in DI factory registrations only to pass options into a service. Register the service normally, inject `IOptions<TOptions>` into the constructor, and read `.Value` there so DI wiring does not change when options gain new properties.
+
 Prefer async APIs for I/O-bound work, include `CancellationToken` on cancellable async boundaries, and use structured logging for operational messages.
 
 Use file-scoped namespaces in every C# file: declare namespaces as `namespace Apangelia.SomeProject;` and do not use block-scoped `namespace ... { }` declarations.
+
+Use `_camelCase` names for private readonly fields. Do not qualify instance member access with `this.`; `this` is only acceptable where C# syntax requires it, such as extension-method parameters.
+
+For generated `Guid` entity identifiers, use Guid v7 from the persistence layer through an EF `ValueGenerator`; do not call `Guid.NewGuid()` or assign entity IDs manually in Application/Core mapping code unless the task explicitly requires it.
 
 Use `record` for DTOs and other immutable data carriers. Use `class` for mutable entities and objects with identity or lifecycle.
 
@@ -25,6 +35,8 @@ Cover public entities and contracts with useful XML comments when they are part 
 Do not duplicate comments on simple implementation classes when the implemented contract is already documented. Add implementation comments only when the implementation exposes additional public behavior, constraints, or non-obvious details not covered by the contract.
 
 Keep comments purposeful: document intent, contract expectations, invariants, and edge cases rather than restating names or obvious code.
+
+If a `catch` block intentionally swallows an exception, include a concise Russian comment inside the block explaining why the exception is ignored.
 
 ## Project Architecture
 
