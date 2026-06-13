@@ -14,6 +14,21 @@ public class AppDbContext : DbContext
     public DbSet<Notification> Notifications { get; set; }
 
     /// <summary>
+    /// Пользовательские маршруты доставки уведомлений.
+    /// </summary>
+    public DbSet<NotificationRoute> NotificationRoutes { get; set; }
+
+    /// <summary>
+    /// Задачи доставки уведомлений.
+    /// </summary>
+    public DbSet<NotificationDelivery> NotificationDeliveries { get; set; }
+
+    /// <summary>
+    /// История попыток доставки уведомлений.
+    /// </summary>
+    public DbSet<NotificationDeliveryAttempt> NotificationDeliveryAttempts { get; set; }
+
+    /// <summary>
     /// Входящие сообщения уведомлений для идемпотентной обработки.
     /// </summary>
     public DbSet<NotificationInboxMessage> NotificationInboxMessages { get; set; }
