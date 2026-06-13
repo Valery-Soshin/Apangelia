@@ -53,6 +53,7 @@ public static class DependencyInjectionConfiguration
             .ValidateOnStart();
 
         services.AddScoped<IGitHubWebhookReceiver, GitHubWebhookReceiver>();
+        services.AddScoped<IGitHubWebhookHandler, GitHubWebhookHandler>();
 
         return services;
     }

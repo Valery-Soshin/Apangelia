@@ -1,5 +1,4 @@
 using System.Text;
-using Apangelia.Application;
 using Apangelia.Integrations.GitHub;
 
 namespace Apangelia.WebApi.Endpoints;
@@ -15,8 +14,7 @@ public static class WebhookEndpoints
 
     private static async Task<IResult> HandleGitHubWebhook(
         HttpRequest request,
-        IGitHubWebhookReceiver gitHubWebhookReceiver,
-        INotificationEventHandler notificationEventHandler,
+        IGitHubWebhookHandler gitHubWebhookHandler,
         CancellationToken cancellationToken)
     {
         using var bodyBuffer = new MemoryStream();
@@ -25,7 +23,7 @@ public static class WebhookEndpoints
         var bodyBytes = bodyBuffer.ToArray();
         var body = Encoding.UTF8.GetString(bodyBytes);
 
-        var receiveResult = await gitHubWebhookReceiver.ReceiveAsync(
+        var handlingResult = await gitHubWebhookHandler.HandleAsync(
             new GitHubWebhookReceiveRequest(
                 request.Headers["X-Hub-Signature-256"].ToString(),
                 request.Headers["X-GitHub-Delivery"].ToString(),
@@ -34,18 +32,16 @@ public static class WebhookEndpoints
                 bodyBytes),
             cancellationToken);
 
-        if (receiveResult.Status == GitHubWebhookReceiveStatus.Unauthorized)
+        if (handlingResult.Status == GitHubWebhookReceiveStatus.Unauthorized)
         {
             return Results.Unauthorized();
         }
 
-        if (receiveResult.Status is GitHubWebhookReceiveStatus.MissingRequiredHeaders
+        if (handlingResult.Status is GitHubWebhookReceiveStatus.MissingRequiredHeaders
             or GitHubWebhookReceiveStatus.InvalidPayload)
         {
             return Results.BadRequest();
         }
-
-        await notificationEventHandler.HandleAsync(receiveResult.NotificationEvent!, cancellationToken);
 
         return Results.Accepted();
     }

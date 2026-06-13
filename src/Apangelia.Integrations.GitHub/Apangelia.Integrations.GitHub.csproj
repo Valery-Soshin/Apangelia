@@ -3,6 +3,7 @@
     <PackageReference Include="Microsoft.Extensions.Options" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Apangelia.Application\Apangelia.Application.csproj" />
     <ProjectReference Include="..\Apangelia.Core\Apangelia.Core.csproj" />
   </ItemGroup>
 </Project>
