@@ -1,5 +1,7 @@
-﻿using Apangelia.Core;
-using Apangelia.WebApi.Configurations;
+using Apangelia.Application;
+using Apangelia.Integrations.GitHub;
+using Apangelia.Persistence.Postgres;
+using Apangelia.Persistence.Postgres.Repositories;
 using Microsoft.AspNetCore.HttpLogging;
 
 namespace Apangelia.WebApi.Configurations;
@@ -13,6 +15,8 @@ public static class DependencyInjectionConfiguration
         services.AddSwagger();
         services.AddEntityFramework(configuration);
         services.AddApplicationServices();
+        services.AddPostgresPersistenceServices();
+        services.AddGitHubIntegration(configuration);
 
         return services;
     }
@@ -27,6 +31,29 @@ public static class DependencyInjectionConfiguration
 
     private static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
+        services.AddScoped<INotificationEventHandler, NotificationEventHandler>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddPostgresPersistenceServices(this IServiceCollection services)
+    {
+        services.AddScoped<INotificationInboxRepository, PostgresNotificationInboxRepository>();
+        services.AddScoped<INotificationRepository, PostgresNotificationRepository>();
+        services.AddScoped<IUnitOfWork, PostgresUnitOfWork>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddGitHubIntegration(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddOptions<GitHubWebhookOptions>()
+            .Bind(configuration.GetSection("Integrations:GitHub"))
+            .Validate(options => !string.IsNullOrWhiteSpace(options.WebhookSecret), "GitHub webhook secret must be configured.")
+            .ValidateOnStart();
+
+        services.AddScoped<IGitHubWebhookReceiver, GitHubWebhookReceiver>();
+
         return services;
     }
 }

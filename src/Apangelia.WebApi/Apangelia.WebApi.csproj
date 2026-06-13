@@ -12,6 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Apangelia.Application\Apangelia.Application.csproj" />
     <ProjectReference Include="..\Apangelia.Core\Apangelia.Core.csproj" />
+    <ProjectReference Include="..\Apangelia.Integrations.GitHub\Apangelia.Integrations.GitHub.csproj" />
     <ProjectReference Include="..\Apangelia.Persistence.Postgres\Apangelia.Persistence.Postgres.csproj" />
     <ProjectReference Include="..\Apangelia.ServiceDefaults\Apangelia.ServiceDefaults.csproj" />
   </ItemGroup>
