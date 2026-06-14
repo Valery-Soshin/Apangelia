@@ -24,9 +24,16 @@ public static class EntityFrameworkConfiguration
 
     private static void AddDbContext<TDbContext>(this IServiceCollection services, IConfiguration configuration) where TDbContext : DbContext
     {
-        services.AddDbContext<TDbContext>(options =>
+        services.AddDbContext<TDbContext>((serviceProvider, options) =>
         {
+            var environment = serviceProvider.GetRequiredService<IHostEnvironment>();
+
             options.UseNpgsql(configuration["ConnectionStrings:Postgres"]);
+
+            if (environment.IsDevelopment())
+            {
+                options.EnableSensitiveDataLogging();
+            }
         });
     }
 }

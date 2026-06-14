@@ -2,12 +2,19 @@ using Apangelia.WebApi.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Добавляем сервисы в контейнер зависимостей
-builder.AddConfiguration();
+builder.AddServiceDefaults();
+
+builder.Services.ConfigureServices(builder.Configuration);
 
 var app = builder.Build();
 
-// Настраиваем конвейер обработки HTTP-запросов
-app.UseConfiguration();
+app.ApplyMigrations();
+
+app.UseSwaggerConf();
+
+app.UseHttpLogging();
+
+app.MapDefaultEndpoints();
+app.MapEndpoints();
 
 app.Run();
