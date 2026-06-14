@@ -1,6 +1,7 @@
-using Apangelia.Application;
+using Apangelia.Application.Behaviors;
 using Apangelia.Application.Commands;
 using Apangelia.Application.Notifications.AcceptEvent;
+using Apangelia.Application.Repositories;
 using Apangelia.Integrations.GitHub;
 using Apangelia.Persistence.Postgres;
 using Apangelia.Persistence.Postgres.Repositories;
@@ -34,6 +35,8 @@ public static class DependencyInjectionConfiguration
     private static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddScoped<ICommandDispatcher, CommandDispatcher>();
+        services.AddScoped(typeof(ICommandPipelineBehavior<,>), typeof(LoggingCommandPipelineBehavior<,>));
+        services.AddScoped(typeof(ICommandPipelineBehavior<,>), typeof(TransactionCommandPipelineBehavior<,>));
         services.AddScoped<ICommandHandler<AcceptNotificationEventCommand, AcceptNotificationEventResult>, AcceptNotificationEventCommandHandler>();
 
         return services;

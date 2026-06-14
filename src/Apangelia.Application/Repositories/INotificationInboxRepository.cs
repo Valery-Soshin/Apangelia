@@ -1,6 +1,6 @@
 using Apangelia.Core;
 
-namespace Apangelia.Application;
+namespace Apangelia.Application.Repositories;
 
 /// <summary>
 /// Сохраняет входящие события уведомлений с проверкой идемпотентности.

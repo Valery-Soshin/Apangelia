@@ -1,4 +1,5 @@
 using Apangelia.Application.Commands;
+using Apangelia.Application.Repositories;
 using Apangelia.Core;
 
 namespace Apangelia.Application.Notifications.AcceptEvent;
@@ -11,38 +12,30 @@ public sealed class AcceptNotificationEventCommandHandler
 {
     private readonly INotificationInboxRepository _inboxRepository;
     private readonly INotificationRepository _notificationRepository;
-    private readonly IUnitOfWork _unitOfWork;
 
     public AcceptNotificationEventCommandHandler(
         INotificationInboxRepository inboxRepository,
-        INotificationRepository notificationRepository,
-        IUnitOfWork unitOfWork)
+        INotificationRepository notificationRepository)
     {
         _inboxRepository = inboxRepository;
         _notificationRepository = notificationRepository;
-        _unitOfWork = unitOfWork;
     }
 
-    public Task<AcceptNotificationEventResult> HandleAsync(
+    public async Task<AcceptNotificationEventResult> HandleAsync(
         AcceptNotificationEventCommand command,
         CancellationToken cancellationToken)
     {
-        return _unitOfWork.ExecuteInTransactionAsync(
-            async transactionCancellationToken =>
-            {
-                var notificationEvent = command.NotificationEvent;
-                var isNewEvent = await _inboxRepository.TryAddAsync(notificationEvent, transactionCancellationToken);
+        var notificationEvent = command.NotificationEvent;
+        var isNewEvent = await _inboxRepository.TryAddAsync(notificationEvent, cancellationToken);
 
-                if (!isNewEvent)
-                {
-                    return AcceptNotificationEventResult.Duplicate;
-                }
+        if (!isNewEvent)
+        {
+            return AcceptNotificationEventResult.Duplicate;
+        }
 
-                await _notificationRepository.AddAsync(MapToNotification(notificationEvent), transactionCancellationToken);
+        await _notificationRepository.AddAsync(MapToNotification(notificationEvent), cancellationToken);
 
-                return AcceptNotificationEventResult.Accepted;
-            },
-            cancellationToken);
+        return AcceptNotificationEventResult.Accepted;
     }
 
     private static Notification MapToNotification(NotificationEvent notificationEvent)

@@ -1,4 +1,6 @@
-namespace Apangelia.Application.Commands;
+using Apangelia.Application.Commands;
+
+namespace Apangelia.Application.Behaviors;
 
 /// <summary>
 /// Выполняет аспект вокруг обработчика команды приложения.

@@ -1,3 +1,4 @@
+using Apangelia.Application.Behaviors;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 
