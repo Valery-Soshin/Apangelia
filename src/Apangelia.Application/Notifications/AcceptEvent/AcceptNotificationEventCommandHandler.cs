@@ -1,17 +1,17 @@
 using Apangelia.Core;
 
-namespace Apangelia.Application;
+namespace Apangelia.Application.Notifications.AcceptEvent;
 
 /// <summary>
-/// Стандартный обработчик входящих событий уведомлений.
+/// Стандартный обработчик команды приема нормализованного события уведомления.
 /// </summary>
-public sealed class NotificationEventHandler : INotificationEventHandler
+public sealed class AcceptNotificationEventCommandHandler : IAcceptNotificationEventCommandHandler
 {
     private readonly INotificationInboxRepository _inboxRepository;
     private readonly INotificationRepository _notificationRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public NotificationEventHandler(
+    public AcceptNotificationEventCommandHandler(
         INotificationInboxRepository inboxRepository,
         INotificationRepository notificationRepository,
         IUnitOfWork unitOfWork)
@@ -21,23 +21,24 @@ public sealed class NotificationEventHandler : INotificationEventHandler
         _unitOfWork = unitOfWork;
     }
 
-    public Task<NotificationEventHandlingResult> HandleAsync(
-        NotificationEvent notificationEvent,
+    public Task<AcceptNotificationEventResult> HandleAsync(
+        AcceptNotificationEventCommand command,
         CancellationToken cancellationToken)
     {
         return _unitOfWork.ExecuteInTransactionAsync(
             async transactionCancellationToken =>
             {
+                var notificationEvent = command.NotificationEvent;
                 var isNewEvent = await _inboxRepository.TryAddAsync(notificationEvent, transactionCancellationToken);
 
                 if (!isNewEvent)
                 {
-                    return NotificationEventHandlingResult.Duplicate;
+                    return AcceptNotificationEventResult.Duplicate;
                 }
 
                 await _notificationRepository.AddAsync(MapToNotification(notificationEvent), transactionCancellationToken);
 
-                return NotificationEventHandlingResult.Accepted;
+                return AcceptNotificationEventResult.Accepted;
             },
             cancellationToken);
     }

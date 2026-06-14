@@ -1,18 +1,18 @@
-using Apangelia.Application;
+using Apangelia.Application.Notifications.AcceptEvent;
 
 namespace Apangelia.Integrations.GitHub;
 
 public sealed class GitHubWebhookHandler : IGitHubWebhookHandler
 {
+    private readonly IAcceptNotificationEventCommandHandler _acceptNotificationEventCommandHandler;
     private readonly IGitHubWebhookReceiver _gitHubWebhookReceiver;
-    private readonly INotificationEventHandler _notificationEventHandler;
 
     public GitHubWebhookHandler(
         IGitHubWebhookReceiver gitHubWebhookReceiver,
-        INotificationEventHandler notificationEventHandler)
+        IAcceptNotificationEventCommandHandler acceptNotificationEventCommandHandler)
     {
         _gitHubWebhookReceiver = gitHubWebhookReceiver;
-        _notificationEventHandler = notificationEventHandler;
+        _acceptNotificationEventCommandHandler = acceptNotificationEventCommandHandler;
     }
 
     public async Task<GitHubWebhookHandlingResult> HandleAsync(
@@ -26,13 +26,13 @@ public sealed class GitHubWebhookHandler : IGitHubWebhookHandler
             return GitHubWebhookHandlingResult.FromReceiveStatus(receiveResult.Status);
         }
 
-        var handlingResult = await _notificationEventHandler.HandleAsync(
-            receiveResult.NotificationEvent!,
+        var handlingResult = await _acceptNotificationEventCommandHandler.HandleAsync(
+            new AcceptNotificationEventCommand(receiveResult.NotificationEvent!),
             cancellationToken);
 
         return handlingResult switch
         {
-            NotificationEventHandlingResult.Accepted or NotificationEventHandlingResult.Duplicate
+            AcceptNotificationEventResult.Accepted or AcceptNotificationEventResult.Duplicate
                 => GitHubWebhookHandlingResult.Accepted(),
             _ => throw new InvalidOperationException($"Unsupported notification event handling result: {handlingResult}.")
         };

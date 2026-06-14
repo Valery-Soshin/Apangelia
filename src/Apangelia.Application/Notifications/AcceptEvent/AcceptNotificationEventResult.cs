@@ -1,9 +1,9 @@
-namespace Apangelia.Application;
+namespace Apangelia.Application.Notifications.AcceptEvent;
 
 /// <summary>
-/// Результат обработки входящего события уведомления.
+/// Результат выполнения команды приема события уведомления.
 /// </summary>
-public enum NotificationEventHandlingResult
+public enum AcceptNotificationEventResult
 {
     /// <summary>
     /// Событие принято впервые и преобразовано в уведомление.
