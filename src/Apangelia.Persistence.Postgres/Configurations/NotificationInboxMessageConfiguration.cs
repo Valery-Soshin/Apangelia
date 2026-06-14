@@ -18,7 +18,6 @@ internal sealed class NotificationInboxMessageConfiguration : IEntityTypeConfigu
         builder.Property(message => message.ExternalEventId).HasMaxLength(128).IsRequired();
         builder.Property(message => message.RawPayloadJson).HasColumnType("jsonb").IsRequired();
         builder.Property(message => message.OccurredAt).IsRequired();
-        builder.Property(message => message.ReceivedAt).IsRequired();
         builder.HasIndex(message => new { message.Source, message.ExternalEventId }).IsUnique();
     }
 }

@@ -24,10 +24,10 @@ public sealed class PostgresNotificationInboxRepository : INotificationInboxRepo
 
         var affectedRows = await _context.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO "NotificationInboxMessages"
-                ("Id", "Source", "EventType", "ExternalEventId", "RawPayloadJson", "OccurredAt", "ReceivedAt")
+                ("Id", "Source", "EventType", "ExternalEventId", "RawPayloadJson", "OccurredAt")
             VALUES
                 ({messageId}, {notificationEvent.Source}, {notificationEvent.EventType}, {notificationEvent.ExternalEventId},
-                 CAST({notificationEvent.RawPayloadJson} AS jsonb), {notificationEvent.OccurredAt}, {DateTimeOffset.UtcNow})
+                 CAST({notificationEvent.RawPayloadJson} AS jsonb), {notificationEvent.OccurredAt})
             ON CONFLICT ("Source", "ExternalEventId") DO NOTHING
             """, cancellationToken);
 

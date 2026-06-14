@@ -16,6 +16,4 @@ public sealed class NotificationInboxMessage
     public string RawPayloadJson { get; set; } = string.Empty;
 
     public DateTimeOffset OccurredAt { get; set; }
-
-    public DateTimeOffset ReceivedAt { get; set; }
 }
