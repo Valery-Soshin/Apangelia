@@ -26,6 +26,8 @@ For generated `Guid` entity identifiers, use Guid v7 from the persistence layer 
 
 Use `record` for DTOs and other immutable data carriers. Use `class` for mutable entities and objects with identity or lifecycle.
 
+For empty class, interface, or struct declarations, use a semicolon declaration instead of an empty `{ }` body, and do not add extra blank lines for empty bodies.
+
 When creating or editing files, remove trailing whitespace on every line, including whitespace-only blank lines. New files must end with exactly one final newline and must not contain indented empty lines.
 
 ## Comments and Documentation
