@@ -1,18 +1,19 @@
+using Apangelia.Application.Commands;
 using Apangelia.Application.Notifications.AcceptEvent;
 
 namespace Apangelia.Integrations.GitHub;
 
 public sealed class GitHubWebhookHandler : IGitHubWebhookHandler
 {
-    private readonly IAcceptNotificationEventCommandHandler _acceptNotificationEventCommandHandler;
+    private readonly ICommandDispatcher _commandDispatcher;
     private readonly IGitHubWebhookReceiver _gitHubWebhookReceiver;
 
     public GitHubWebhookHandler(
         IGitHubWebhookReceiver gitHubWebhookReceiver,
-        IAcceptNotificationEventCommandHandler acceptNotificationEventCommandHandler)
+        ICommandDispatcher commandDispatcher)
     {
         _gitHubWebhookReceiver = gitHubWebhookReceiver;
-        _acceptNotificationEventCommandHandler = acceptNotificationEventCommandHandler;
+        _commandDispatcher = commandDispatcher;
     }
 
     public async Task<GitHubWebhookHandlingResult> HandleAsync(
@@ -26,7 +27,7 @@ public sealed class GitHubWebhookHandler : IGitHubWebhookHandler
             return GitHubWebhookHandlingResult.FromReceiveStatus(receiveResult.Status);
         }
 
-        var handlingResult = await _acceptNotificationEventCommandHandler.HandleAsync(
+        var handlingResult = await _commandDispatcher.HandleAsync(
             new AcceptNotificationEventCommand(receiveResult.NotificationEvent!),
             cancellationToken);
 

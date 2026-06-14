@@ -50,6 +50,8 @@ If a `catch` block intentionally swallows an exception, include a concise Russia
 
 `Apangelia.Application` is the use-case layer. Put application services, commands/queries, workflow orchestration, validation that is not HTTP-specific, and ports for persistence or external integrations here. It may depend on `Apangelia.Core`; keep it independent of ASP.NET Core, Aspire, concrete database providers, and external API SDKs.
 
+Use the shared command abstractions in `Apangelia.Application.Commands` for application commands. New command handlers should implement `ICommandHandler<TCommand, TResult>` and be invoked through `ICommandDispatcher` so pipeline behaviors can wrap them consistently. Do not add feature-specific handler interfaces just to call commands directly. Keep the dispatcher scoped; if a singleton or background worker needs to dispatch commands, create a service scope at that boundary and resolve the dispatcher inside it. Keep transaction handling inside the handler unless a task explicitly introduces a transaction pipeline behavior.
+
 `Apangelia.Core` is the intended home for domain model, domain contracts, and business rules. Keep it independent of ASP.NET Core, Aspire, database providers, external API SDKs, and application orchestration unless there is a deliberate architectural change.
 
 `Apangelia.Integrations.GitHub` is the boundary for GitHub-specific behavior such as webhook payload models, signature verification, API clients, and GitHub mapping logic. Use it to implement application ports; keep GitHub details out of `Apangelia.Application` and `Apangelia.Core` except for neutral contracts or domain concepts.

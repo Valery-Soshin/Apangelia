@@ -1,3 +1,4 @@
+using Apangelia.Application.Commands;
 using Apangelia.Core;
 
 namespace Apangelia.Application.Notifications.AcceptEvent;
@@ -5,7 +6,8 @@ namespace Apangelia.Application.Notifications.AcceptEvent;
 /// <summary>
 /// Стандартный обработчик команды приема нормализованного события уведомления.
 /// </summary>
-public sealed class AcceptNotificationEventCommandHandler : IAcceptNotificationEventCommandHandler
+public sealed class AcceptNotificationEventCommandHandler
+    : ICommandHandler<AcceptNotificationEventCommand, AcceptNotificationEventResult>
 {
     private readonly INotificationInboxRepository _inboxRepository;
     private readonly INotificationRepository _notificationRepository;
