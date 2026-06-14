@@ -1,4 +1,4 @@
-namespace Apangelia.Application.Commands;
+namespace Apangelia.Application.SeedWork;
 
 /// <summary>
 /// Отправляет команды приложения в зарегистрированные обработчики.

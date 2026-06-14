@@ -1,4 +1,4 @@
-namespace Apangelia.Application.Commands;
+namespace Apangelia.Application.SeedWork;
 
 /// <summary>
 /// Представляет следующий шаг выполнения команды в цепочке обработчиков.

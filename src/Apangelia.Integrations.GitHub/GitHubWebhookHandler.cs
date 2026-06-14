@@ -1,5 +1,5 @@
-using Apangelia.Application.Commands;
-using Apangelia.Application.Notifications.AcceptEvent;
+using Apangelia.Application.Commands.Notifications;
+using Apangelia.Application.SeedWork;
 
 namespace Apangelia.Integrations.GitHub;
 

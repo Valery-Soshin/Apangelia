@@ -1,7 +1,7 @@
-using Apangelia.Application.Commands;
 using Apangelia.Application.Repositories;
+using Apangelia.Application.SeedWork;
 
-namespace Apangelia.Application.Behaviors;
+namespace Apangelia.Application.GlobalBehaviors;
 
 /// <summary>
 /// Выполняет команду приложения внутри транзакционной единицы работы.

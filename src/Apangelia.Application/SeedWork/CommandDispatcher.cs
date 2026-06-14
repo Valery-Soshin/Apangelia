@@ -1,8 +1,7 @@
-using Apangelia.Application.Behaviors;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 
-namespace Apangelia.Application.Commands;
+namespace Apangelia.Application.SeedWork;
 
 /// <summary>
 /// Стандартный отправитель команд приложения через контейнер зависимостей.

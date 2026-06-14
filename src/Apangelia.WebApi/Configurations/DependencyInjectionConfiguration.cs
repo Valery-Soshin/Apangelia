@@ -1,7 +1,7 @@
-using Apangelia.Application.Behaviors;
-using Apangelia.Application.Commands;
-using Apangelia.Application.Notifications.AcceptEvent;
+using Apangelia.Application.Commands.Notifications;
+using Apangelia.Application.GlobalBehaviors;
 using Apangelia.Application.Repositories;
+using Apangelia.Application.SeedWork;
 using Apangelia.Integrations.GitHub;
 using Apangelia.Persistence.Postgres;
 using Apangelia.Persistence.Postgres.Repositories;

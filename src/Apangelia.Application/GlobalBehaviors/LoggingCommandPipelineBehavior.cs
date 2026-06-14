@@ -1,8 +1,8 @@
 using System.Diagnostics;
-using Apangelia.Application.Commands;
+using Apangelia.Application.SeedWork;
 using Microsoft.Extensions.Logging;
 
-namespace Apangelia.Application.Behaviors;
+namespace Apangelia.Application.GlobalBehaviors;
 
 /// <summary>
 /// Логирует выполнение команды приложения без записи полезной нагрузки команды и результата.

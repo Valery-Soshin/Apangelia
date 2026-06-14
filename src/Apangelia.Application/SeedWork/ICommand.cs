@@ -1,4 +1,4 @@
-namespace Apangelia.Application.Commands;
+namespace Apangelia.Application.SeedWork;
 
 /// <summary>
 /// Определяет команду приложения, возвращающую результат.
