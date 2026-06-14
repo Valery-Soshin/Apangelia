@@ -46,6 +46,8 @@ public static class DependencyInjectionConfiguration
     {
         services.AddScoped<INotificationInboxRepository, PostgresNotificationInboxRepository>();
         services.AddScoped<INotificationRepository, PostgresNotificationRepository>();
+        services.AddScoped<INotificationRouteRepository, PostgresNotificationRouteRepository>();
+        services.AddScoped<INotificationDeliveryRepository, PostgresNotificationDeliveryRepository>();
         services.AddScoped<IUnitOfWork, PostgresUnitOfWork>();
 
         return services;
