@@ -27,7 +27,7 @@ internal sealed class NotificationDeliveryConfiguration : IEntityTypeConfigurati
         builder.Property(delivery => delivery.AttemptCount).IsRequired();
         builder.Property(delivery => delivery.MaxAttempts).IsRequired();
         builder.Property(delivery => delivery.CreatedAt).IsRequired();
-        builder.Property(delivery => delivery.UpdatedAt).IsRequired();
+        builder.Property(delivery => delivery.UpdatedAt);
         builder.HasOne<Notification>()
             .WithMany()
             .HasForeignKey(delivery => delivery.NotificationId)

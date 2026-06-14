@@ -20,6 +20,8 @@ Prefer async APIs for I/O-bound work, include `CancellationToken` on cancellable
 
 Use file-scoped namespaces in every C# file: declare namespaces as `namespace Apangelia.SomeProject;` and do not use block-scoped `namespace ... { }` declarations.
 
+Formatting style rules do not apply to automatically generated files. Do not reformat generated code solely to match repository style.
+
 Use `_camelCase` names for private readonly fields. Do not qualify instance member access with `this.`; `this` is only acceptable where C# syntax requires it, such as extension-method parameters.
 
 For generated `Guid` entity identifiers, use Guid v7 from the persistence layer through an EF `ValueGenerator`; do not call `Guid.NewGuid()` or assign entity IDs manually in Application/Core mapping code unless the task explicitly requires it.
@@ -61,6 +63,8 @@ Use the shared command abstractions in `Apangelia.Application.Commands` for appl
 `Apangelia.Persistence.Postgres` is the boundary for PostgreSQL persistence. Keep EF Core `DbContext`, migrations, Npgsql mapping, and provider-specific storage code here, then expose them by implementing abstractions that `Apangelia.Application` can consume. Registration and migration application may be wired from `Apangelia.WebApi`, but `Apangelia.Application` and `Apangelia.Core` must not depend on EF Core or Npgsql.
 
 Do not edit existing EF Core migration files unless the migration was created in the current diff. For model changes after a migration already exists, create a separate migration and let `AppDbContextModelSnapshot` reflect the latest model.
+
+When changing a model or EF configuration that represents database schema, include the corresponding EF Core migration in the same change. Do not leave schema-affecting entity changes without a migration.
 
 Create EF Core migrations from the repository root with `dotnet ef migrations add <Name> --project src\Apangelia.Persistence.Postgres\Apangelia.Persistence.Postgres.csproj --startup-project src\Apangelia.WebApi\Apangelia.WebApi.csproj --output-dir Migrations`. Do not use `--no-build` unless the solution has just been built successfully and the compiled artifacts are known to match the current source.
 

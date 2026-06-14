@@ -63,5 +63,5 @@ public sealed class NotificationDelivery
     /// <summary>
     /// Время последнего изменения задачи доставки.
     /// </summary>
-    public DateTimeOffset UpdatedAt { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
 }
