@@ -60,6 +60,10 @@ Use the shared command abstractions in `Apangelia.Application.Commands` for appl
 
 `Apangelia.Persistence.Postgres` is the boundary for PostgreSQL persistence. Keep EF Core `DbContext`, migrations, Npgsql mapping, and provider-specific storage code here, then expose them by implementing abstractions that `Apangelia.Application` can consume. Registration and migration application may be wired from `Apangelia.WebApi`, but `Apangelia.Application` and `Apangelia.Core` must not depend on EF Core or Npgsql.
 
+Do not edit existing EF Core migration files unless the migration was created in the current diff. For model changes after a migration already exists, create a separate migration and let `AppDbContextModelSnapshot` reflect the latest model.
+
+Create EF Core migrations from the repository root with `dotnet ef migrations add <Name> --project src\Apangelia.Persistence.Postgres\Apangelia.Persistence.Postgres.csproj --startup-project src\Apangelia.WebApi\Apangelia.WebApi.csproj --output-dir Migrations`. Do not use `--no-build` unless the solution has just been built successfully and the compiled artifacts are known to match the current source.
+
 Prefer dependency flow from hosts/adapters inward: `AppHost` composes services, `WebApi` wires features, integration and persistence projects implement external boundaries, `Application` orchestrates use cases, and `Core` stays the most independent project. Update `Apangelia.slnx` and project references together when adding or wiring projects.
 
 ## Verification
