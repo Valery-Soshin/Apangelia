@@ -26,11 +26,6 @@ public sealed class NotificationDelivery
     public NotificationDeliveryStatus Status { get; set; }
 
     /// <summary>
-    /// Время, с которого доставка может быть обработана worker-ом.
-    /// </summary>
-    public DateTimeOffset ScheduledAt { get; set; }
-
-    /// <summary>
     /// Время следующей попытки доставки, если она отложена.
     /// </summary>
     public DateTimeOffset? NextAttemptAt { get; set; }

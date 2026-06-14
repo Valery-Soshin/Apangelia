@@ -20,7 +20,6 @@ internal sealed class NotificationDeliveryConfiguration : IEntityTypeConfigurati
             .HasConversion<string>()
             .HasMaxLength(32)
             .IsRequired();
-        builder.Property(delivery => delivery.ScheduledAt).IsRequired();
         builder.Property(delivery => delivery.NextAttemptAt);
         builder.Property(delivery => delivery.LastAttemptAt);
         builder.Property(delivery => delivery.DeliveredAt);
@@ -39,6 +38,6 @@ internal sealed class NotificationDeliveryConfiguration : IEntityTypeConfigurati
             .OnDelete(DeleteBehavior.Restrict);
         builder.HasIndex(delivery => delivery.NotificationId);
         builder.HasIndex(delivery => delivery.RouteId);
-        builder.HasIndex(delivery => new { delivery.Status, delivery.NextAttemptAt, delivery.ScheduledAt });
+        builder.HasIndex(delivery => new { delivery.Status, delivery.NextAttemptAt });
     }
 }
