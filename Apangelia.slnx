@@ -9,6 +9,7 @@
   <Project Path="src/Apangelia.Application/Apangelia.Application.csproj" />
   <Project Path="src/Apangelia.Core/Apangelia.Core.csproj" Id="204a3fb4-ff36-49f7-9fdd-94019f51a68f" />
   <Project Path="src/Apangelia.Integrations.GitHub/Apangelia.Integrations.GitHub.csproj" />
+  <Project Path="src/Apangelia.Integrations.Telegram/Apangelia.Integrations.Telegram.csproj" Id="daec04a3-d2ee-4d1b-9b5c-9c4518a8f005" />
   <Project Path="src/Apangelia.Persistence.Postgres/Apangelia.Persistence.Postgres.csproj" Id="7ef7c074-4532-4f73-87de-adae461c1ce0" />
   <Project Path="src/Apangelia.ServiceDefaults/Apangelia.ServiceDefaults.csproj" />
   <Project Path="src/Apangelia.WebApi/Apangelia.WebApi.csproj" />

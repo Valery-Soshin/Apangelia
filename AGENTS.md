@@ -12,7 +12,7 @@ Use normal .NET configuration patterns: `appsettings*.json`, environment variabl
 
 Do not add constructor null checks for dependencies provided by dependency injection. Rely on DI container validation and nullable annotations for required services; reserve explicit null validation for non-DI inputs and public API boundaries.
 
-For options classes, keep configuration values immutable after binding: use `required` properties with `init` setters. Do not add section-name constants to options types for one-off bindings; bind the configuration section explicitly from the composition root.
+For options classes, keep configuration values immutable after binding: use `required` properties with `init` setters. Put default configurable values in `appsettings.json` rather than property initializers on options classes. Do not add section-name constants to options types for one-off bindings; bind the configuration section explicitly from the composition root.
 
 Do not unwrap `IOptions<TOptions>` in DI factory registrations only to pass options into a service. Register the service normally, inject `IOptions<TOptions>` into the constructor, and read `.Value` there so DI wiring does not change when options gain new properties.
 

@@ -1,10 +1,13 @@
 using Apangelia.Application.Commands.Notifications;
 using Apangelia.Application.GlobalBehaviors;
+using Apangelia.Application.Notifications;
 using Apangelia.Application.Repositories;
 using Apangelia.Application.SeedWork;
 using Apangelia.Integrations.GitHub;
+using Apangelia.Integrations.Telegram;
 using Apangelia.Persistence.Postgres;
 using Apangelia.Persistence.Postgres.Repositories;
+using Apangelia.WebApi.Workers;
 using Microsoft.AspNetCore.HttpLogging;
 
 namespace Apangelia.WebApi.Configurations;
@@ -20,6 +23,7 @@ public static class DependencyInjectionConfiguration
         services.AddApplicationServices();
         services.AddPostgresPersistenceServices();
         services.AddGitHubIntegration(configuration);
+        services.AddNotificationDeliveryWorker(configuration);
 
         return services;
     }
@@ -38,6 +42,8 @@ public static class DependencyInjectionConfiguration
         services.AddScoped(typeof(ICommandPipelineBehavior<,>), typeof(LoggingCommandPipelineBehavior<,>));
         services.AddScoped(typeof(ICommandPipelineBehavior<,>), typeof(TransactionCommandPipelineBehavior<,>));
         services.AddScoped<ICommandHandler<AcceptNotificationEventCommand, AcceptNotificationEventResult>, AcceptNotificationEventCommandHandler>();
+        services.AddScoped<INotificationProviderResolver, NotificationProviderResolver>();
+        services.AddScoped<NotificationDeliveryProcessor>();
 
         return services;
     }
@@ -62,6 +68,22 @@ public static class DependencyInjectionConfiguration
 
         services.AddScoped<IGitHubWebhookReceiver, GitHubWebhookReceiver>();
         services.AddScoped<IGitHubWebhookHandler, GitHubWebhookHandler>();
+        services.AddScoped<INotificationProvider, TelegramNotificationProvider>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddNotificationDeliveryWorker(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddOptions<NotificationDeliveryWorkerOptions>()
+            .Bind(configuration.GetSection("BackgroundWorkers:NotificationDelivery"))
+            .Validate(options => options.BatchSize > 0, "Notification delivery worker batch size must be positive.")
+            .Validate(options => options.PollingInterval > TimeSpan.Zero, "Notification delivery worker polling interval must be positive.")
+            .Validate(options => options.MaxAttempts > 0, "Notification delivery worker max attempts must be positive.")
+            .Validate(options => options.InitialRetryDelay > TimeSpan.Zero, "Notification delivery worker initial retry delay must be positive.")
+            .ValidateOnStart();
+
+        services.AddHostedService<NotificationDeliveryWorker>();
 
         return services;
     }

@@ -10,7 +10,7 @@ namespace Apangelia.Application.Commands.Notifications;
 public sealed class AcceptNotificationEventCommandHandler
     : ICommandHandler<AcceptNotificationEventCommand, AcceptNotificationEventResult>
 {
-    private const int DefaultMaxDeliveryAttempts = 3;
+    private const int DefaultMaxDeliveryAttempts = 5;
 
     // Временная заглушка до появления сущности User и контекста текущего пользователя.
     private static readonly Guid TemporaryUserId = Guid.Parse("019ec79d-b1ec-7dc7-a9f7-e96899574d7b");
