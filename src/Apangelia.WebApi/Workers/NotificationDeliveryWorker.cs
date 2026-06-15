@@ -1,4 +1,5 @@
 using Apangelia.Application.Notifications;
+using Apangelia.Application.SeedWork;
 using Microsoft.Extensions.Options;
 
 namespace Apangelia.WebApi.Workers;
@@ -59,7 +60,7 @@ public sealed class NotificationDeliveryWorker : BackgroundService
                     processedCount);
             }
         }
-        catch (Exception exception) when (exception is not OperationCanceledException || !stoppingToken.IsCancellationRequested)
+        catch (Exception exception) when (exception.IsNotExpectedCancellation(stoppingToken))
         {
             _logger.LogError(
                 exception,

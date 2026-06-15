@@ -1,4 +1,5 @@
 using Apangelia.Application.Repositories;
+using Apangelia.Application.SeedWork;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -9,9 +10,6 @@ namespace Apangelia.Application.Notifications;
 /// </summary>
 public sealed class NotificationDeliveryProcessor
 {
-    private const int MaxErrorCodeLength = 128;
-    private const string ProviderFailureErrorCode = "ProviderFailure";
-
     private readonly INotificationDeliveryRepository _deliveryRepository;
     private readonly ILogger<NotificationDeliveryProcessor> _logger;
     private readonly NotificationDeliveryWorkerOptions _options;
@@ -58,22 +56,24 @@ public sealed class NotificationDeliveryProcessor
         try
         {
             var request = claimedDelivery.SendRequest;
+
             var provider = _providerResolver.Resolve(request.Route.OutputProviderId);
             var result = await provider.SendAsync(request, cancellationToken);
 
             if (result.IsSuccess)
             {
                 await MarkDeliveredAsync(claimedDelivery, cancellationToken);
-                return;
             }
-
-            await MarkFailedAsync(
-                claimedDelivery,
-                result.ErrorCode,
-                result.ErrorMessage,
-                cancellationToken);
+            else
+            {
+                await MarkFailedAsync(
+                    claimedDelivery,
+                    result.ErrorCode,
+                    result.ErrorMessage,
+                    cancellationToken);
+            }
         }
-        catch (Exception exception) when (exception is not OperationCanceledException || !cancellationToken.IsCancellationRequested)
+        catch (Exception exception) when (exception.IsNotExpectedCancellation(cancellationToken))
         {
             _logger.LogWarning(
                 exception,
@@ -109,7 +109,7 @@ public sealed class NotificationDeliveryProcessor
     {
         var completedAt = DateTimeOffset.UtcNow;
         var delivery = claimedDelivery.SendRequest.Delivery;
-        var normalizedErrorCode = NormalizeErrorCode(errorCode);
+        var normalizedErrorCode = NotificationDeliveryProcessorHelper.NormalizeErrorCode(errorCode);
 
         if (delivery.AttemptCount >= _options.MaxAttempts)
         {
@@ -122,7 +122,8 @@ public sealed class NotificationDeliveryProcessor
                 cancellationToken);
         }
 
-        var nextAttemptAt = completedAt + CalculateRetryDelay(delivery.AttemptCount, _options.InitialRetryDelay);
+        var nextAttemptAt = completedAt + NotificationDeliveryProcessorHelper
+            .CalculateRetryDelay(delivery.AttemptCount, _options.InitialRetryDelay);
 
         return _deliveryRepository.ScheduleRetryAsync(
             delivery.Id,
@@ -132,23 +133,5 @@ public sealed class NotificationDeliveryProcessor
             normalizedErrorCode,
             errorMessage,
             cancellationToken);
-    }
-
-    private static TimeSpan CalculateRetryDelay(int attemptCount, TimeSpan initialRetryDelay)
-    {
-        var multiplier = 1L << Math.Max(0, attemptCount - 1);
-
-        return TimeSpan.FromTicks(initialRetryDelay.Ticks * multiplier);
-    }
-
-    private static string NormalizeErrorCode(string? errorCode)
-    {
-        var normalizedErrorCode = string.IsNullOrWhiteSpace(errorCode)
-            ? ProviderFailureErrorCode
-            : errorCode;
-
-        return normalizedErrorCode.Length <= MaxErrorCodeLength
-            ? normalizedErrorCode
-            : normalizedErrorCode[..MaxErrorCodeLength];
     }
 }

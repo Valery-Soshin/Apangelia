@@ -40,7 +40,7 @@ public sealed class PostgresNotificationDeliveryRepository : INotificationDelive
             })
             .ToArray();
 
-        await _context.NotificationDeliveryAttempts.AddRangeAsync(attempts, cancellationToken);
+        _context.NotificationDeliveryAttempts.AddRange(attempts);
         await _context.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
 
@@ -56,7 +56,8 @@ public sealed class PostgresNotificationDeliveryRepository : INotificationDelive
             return;
         }
 
-        await _context.NotificationDeliveries.AddRangeAsync(deliveries, cancellationToken);
+        _context.NotificationDeliveries.AddRange(deliveries);
+
         await _context.SaveChangesAsync(cancellationToken);
     }
 
@@ -66,7 +67,7 @@ public sealed class PostgresNotificationDeliveryRepository : INotificationDelive
         DateTimeOffset completedAt,
         CancellationToken cancellationToken)
     {
-        var (delivery, attempt) = await GetDeliveryAttemptAsync(deliveryId, attemptId, cancellationToken);
+        var (delivery, attempt) = await GetDeliveryAndAttemptAsync(deliveryId, attemptId, cancellationToken);
 
         attempt.FinishedAt = completedAt;
         attempt.ErrorCode = null;
@@ -90,7 +91,7 @@ public sealed class PostgresNotificationDeliveryRepository : INotificationDelive
         string? errorMessage,
         CancellationToken cancellationToken)
     {
-        var (delivery, attempt) = await GetDeliveryAttemptAsync(deliveryId, attemptId, cancellationToken);
+        var (delivery, attempt) = await GetDeliveryAndAttemptAsync(deliveryId, attemptId, cancellationToken);
 
         attempt.FinishedAt = completedAt;
         attempt.ErrorCode = errorCode;
@@ -113,7 +114,7 @@ public sealed class PostgresNotificationDeliveryRepository : INotificationDelive
         string? errorMessage,
         CancellationToken cancellationToken)
     {
-        var (delivery, attempt) = await GetDeliveryAttemptAsync(deliveryId, attemptId, cancellationToken);
+        var (delivery, attempt) = await GetDeliveryAndAttemptAsync(deliveryId, attemptId, cancellationToken);
 
         attempt.FinishedAt = completedAt;
         attempt.ErrorCode = errorCode;
@@ -205,6 +206,7 @@ public sealed class PostgresNotificationDeliveryRepository : INotificationDelive
             .Select(delivery => delivery.NotificationId)
             .Distinct()
             .ToArray();
+
         var routeIds = deliveries
             .Select(delivery => delivery.RouteId)
             .Distinct()
@@ -214,10 +216,12 @@ public sealed class PostgresNotificationDeliveryRepository : INotificationDelive
             .AsNoTracking()
             .Where(notification => notificationIds.Contains(notification.Id))
             .ToDictionaryAsync(notification => notification.Id, cancellationToken);
+
         var routes = await _context.NotificationRoutes
             .AsNoTracking()
             .Where(route => routeIds.Contains(route.Id))
             .ToDictionaryAsync(route => route.Id, cancellationToken);
+
         var attemptsByDeliveryId = attempts.ToDictionary(attempt => attempt.NotificationDeliveryId);
 
         return deliveries
@@ -230,15 +234,16 @@ public sealed class PostgresNotificationDeliveryRepository : INotificationDelive
             .ToArray();
     }
 
-    private async Task<(NotificationDelivery Delivery, NotificationDeliveryAttempt Attempt)> GetDeliveryAttemptAsync(
+    private async Task<(NotificationDelivery Delivery, NotificationDeliveryAttempt Attempt)> GetDeliveryAndAttemptAsync(
         Guid deliveryId,
         Guid attemptId,
         CancellationToken cancellationToken)
     {
         var delivery = await _context.NotificationDeliveries
-            .SingleAsync(currentDelivery => currentDelivery.Id == deliveryId, cancellationToken);
+            .FirstAsync(currentDelivery => currentDelivery.Id == deliveryId, cancellationToken);
+
         var attempt = await _context.NotificationDeliveryAttempts
-            .SingleAsync(currentAttempt =>
+            .FirstAsync(currentAttempt =>
                 currentAttempt.Id == attemptId
                 && currentAttempt.NotificationDeliveryId == deliveryId,
                 cancellationToken);
