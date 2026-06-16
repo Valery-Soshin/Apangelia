@@ -14,9 +14,6 @@ public sealed class AcceptNotificationEventCommandHandler
 {
     private const int DefaultMaxDeliveryAttempts = 5;
 
-    // Временная заглушка до появления сущности User и контекста текущего пользователя.
-    private static readonly Guid TemporaryUserId = Guid.Parse("019ec79d-b1ec-7dc7-a9f7-e96899574d7b");
-
     private readonly INotificationDeliveryRepository _deliveryRepository;
     private readonly INotificationInboxRepository _inboxRepository;
     private readonly INotificationRepository _notificationRepository;
@@ -58,7 +55,7 @@ public sealed class AcceptNotificationEventCommandHandler
         await _notificationRepository.AddAsync(notification, cancellationToken);
 
         var routes = await _routeRepository.GetByUserAndInputProviderAsync(
-            TemporaryUserId,
+            TemporaryNotificationUser.Id,
             command.Source,
             cancellationToken);
 

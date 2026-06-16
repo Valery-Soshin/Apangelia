@@ -8,6 +8,13 @@ namespace Apangelia.Application.Abstractions.Persistence;
 public interface INotificationRouteRepository
 {
     /// <summary>
+    /// Регистрирует маршрут доставки или обновляет существующий маршрут с тем же владельцем и провайдерами.
+    /// </summary>
+    /// <param name="route">Маршрут доставки уведомлений.</param>
+    /// <param name="cancellationToken">Токен отмены операции.</param>
+    Task RegisterAsync(NotificationRoute route, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Возвращает маршруты пользователя для входящего провайдера уведомления.
     /// </summary>
     /// <param name="userId">Идентификатор владельца маршрутов.</param>

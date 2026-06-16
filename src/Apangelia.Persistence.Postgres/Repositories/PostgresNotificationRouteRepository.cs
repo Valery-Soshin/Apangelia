@@ -16,6 +16,29 @@ public sealed class PostgresNotificationRouteRepository : INotificationRouteRepo
         _context = context;
     }
 
+    public async Task RegisterAsync(NotificationRoute route, CancellationToken cancellationToken)
+    {
+        var currentRoute = await _context.NotificationRoutes
+            .FirstOrDefaultAsync(
+                existingRoute =>
+                    existingRoute.UserId == route.UserId
+                    && existingRoute.InputProviderId == route.InputProviderId
+                    && existingRoute.OutputProviderId == route.OutputProviderId
+                    && existingRoute.ConditionsJson == route.ConditionsJson,
+                cancellationToken);
+
+        if (currentRoute is null)
+        {
+            await _context.NotificationRoutes.AddAsync(route, cancellationToken);
+        }
+        else
+        {
+            currentRoute.DestinationId = route.DestinationId;
+        }
+
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task<IReadOnlyCollection<NotificationRoute>> GetByUserAndInputProviderAsync(
         Guid userId,
         string inputProviderId,
