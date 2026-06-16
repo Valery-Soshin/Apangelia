@@ -1,3 +1,5 @@
+using Apangelia.Application.Abstractions.Providers;
+
 namespace Apangelia.Application.NotificationProviders;
 
 /// <summary>

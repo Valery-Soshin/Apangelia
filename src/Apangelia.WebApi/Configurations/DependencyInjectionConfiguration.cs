@@ -1,18 +1,16 @@
-using Apangelia.Application.Commands.AcceptNotificationEvent;
-using Apangelia.Application.Commands.ProcessNotificationDeliveryBatch;
-using Apangelia.Application.PipelineBehaviors;
-using Apangelia.Application.NotificationDeliveries;
 using Apangelia.Application.NotificationProviders;
-using Apangelia.Application.Notifications;
-using Apangelia.Application.NotificationRoutes;
-using Apangelia.Application.SeedWork;
 using Apangelia.Integrations.GitHub;
 using Apangelia.Integrations.Telegram;
 using Apangelia.Persistence.Postgres;
 using Apangelia.Persistence.Postgres.Repositories;
 using Apangelia.WebApi.Workers;
 using Microsoft.AspNetCore.HttpLogging;
-using Apangelia.Application.NotificationInboxes;
+using Apangelia.Application.NotificationDeliveries.ProcessNotificationDeliveryBatch;
+using Apangelia.Application.Abstractions.Persistence;
+using Apangelia.Application.Abstractions.Providers;
+using Apangelia.Application.Notifications.AcceptNotificationEvent;
+using Apangelia.Application.Shared.PipelineBehaviors;
+using Apangelia.Application.Shared.CommandBase;
 
 namespace Apangelia.WebApi.Configurations;
 

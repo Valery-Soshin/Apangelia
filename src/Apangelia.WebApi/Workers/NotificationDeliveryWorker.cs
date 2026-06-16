@@ -1,6 +1,6 @@
-using Apangelia.Application.Commands.ProcessNotificationDeliveryBatch;
-using Apangelia.Application.NotificationDeliveries;
-using Apangelia.Application.SeedWork;
+using Apangelia.Application.NotificationDeliveries.ProcessNotificationDeliveryBatch;
+using Apangelia.Application.Shared;
+using Apangelia.Application.Shared.CommandBase;
 using Microsoft.Extensions.Options;
 
 namespace Apangelia.WebApi.Workers;

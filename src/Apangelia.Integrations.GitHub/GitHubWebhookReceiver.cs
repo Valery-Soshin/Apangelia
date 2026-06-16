@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using Apangelia.Application.Commands.AcceptNotificationEvent;
+using Apangelia.Application.Notifications.AcceptNotificationEvent;
 using Microsoft.Extensions.Options;
 
 namespace Apangelia.Integrations.GitHub;

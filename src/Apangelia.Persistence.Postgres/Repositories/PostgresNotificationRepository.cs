@@ -1,4 +1,4 @@
-using Apangelia.Application.Notifications;
+using Apangelia.Application.Abstractions.Persistence;
 using Apangelia.Core;
 using Apangelia.Persistence.Postgres;
 using Microsoft.EntityFrameworkCore;

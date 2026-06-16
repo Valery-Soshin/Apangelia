@@ -1,5 +1,6 @@
-using Apangelia.Application.NotificationDeliveries;
-using Apangelia.Application.NotificationProviders;
+using Apangelia.Application.Abstractions.Persistence;
+using Apangelia.Application.Abstractions.Persistence.Models;
+using Apangelia.Application.Abstractions.Providers;
 using Apangelia.Core;
 using Microsoft.EntityFrameworkCore;
 

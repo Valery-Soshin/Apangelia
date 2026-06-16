@@ -1,4 +1,4 @@
-using Apangelia.Application.NotificationRoutes;
+using Apangelia.Application.Abstractions.Persistence;
 using Apangelia.Core;
 using Microsoft.EntityFrameworkCore;
 

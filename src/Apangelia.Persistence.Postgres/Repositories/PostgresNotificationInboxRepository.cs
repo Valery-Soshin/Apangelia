@@ -1,4 +1,5 @@
-using Apangelia.Application.NotificationInboxes;
+using Apangelia.Application.Abstractions.Persistence;
+using Apangelia.Application.Abstractions.Persistence.Models;
 using Apangelia.Persistence.Postgres;
 using Apangelia.Persistence.Postgres.ValueGenerators;
 using Microsoft.EntityFrameworkCore;

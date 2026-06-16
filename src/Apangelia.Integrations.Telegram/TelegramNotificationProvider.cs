@@ -1,4 +1,4 @@
-﻿using Apangelia.Application.NotificationProviders;
+﻿using Apangelia.Application.Abstractions.Providers;
 
 namespace Apangelia.Integrations.Telegram;
 
