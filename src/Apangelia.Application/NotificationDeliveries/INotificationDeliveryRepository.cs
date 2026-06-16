@@ -14,7 +14,7 @@ public interface INotificationDeliveryRepository
     /// <param name="claimedAt">Время закрепления заданий.</param>
     /// <param name="cancellationToken">Токен отмены операции.</param>
     /// <returns>Закрепленные задания доставки с данными для отправки.</returns>
-    Task<IReadOnlyCollection<ClaimedNotificationDelivery>> ClaimForProcessingAsync(
+    Task<IReadOnlyCollection<NotificationDeliveryClaim>> ClaimForProcessingAsync(
         int batchSize,
         DateTimeOffset claimedAt,
         CancellationToken cancellationToken);

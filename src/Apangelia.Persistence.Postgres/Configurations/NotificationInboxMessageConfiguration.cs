@@ -1,12 +1,13 @@
+using Apangelia.Persistence.Postgres.Entities;
 using Apangelia.Persistence.Postgres.ValueGenerators;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Apangelia.Persistence.Postgres.Configurations;
 
-internal sealed class NotificationInboxMessageConfiguration : IEntityTypeConfiguration<NotificationInboxMessage>
+internal sealed class NotificationInboxMessageConfiguration : IEntityTypeConfiguration<NotificationInboxEntity>
 {
-    public void Configure(EntityTypeBuilder<NotificationInboxMessage> builder)
+    public void Configure(EntityTypeBuilder<NotificationInboxEntity> builder)
     {
         builder.ToTable("NotificationInboxMessages");
         builder.HasKey(message => message.Id);

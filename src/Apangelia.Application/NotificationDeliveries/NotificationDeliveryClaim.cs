@@ -7,6 +7,6 @@ namespace Apangelia.Application.NotificationDeliveries;
 /// </summary>
 /// <param name="AttemptId">Идентификатор начатой попытки доставки.</param>
 /// <param name="SendRequest">Данные для отправки уведомления исходящим провайдером.</param>
-public sealed record ClaimedNotificationDelivery(
+public sealed record NotificationDeliveryClaim(
     Guid AttemptId,
     NotificationProviderRequest SendRequest);

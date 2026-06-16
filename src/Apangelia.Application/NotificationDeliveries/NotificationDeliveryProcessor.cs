@@ -50,7 +50,7 @@ public sealed class NotificationDeliveryProcessor
     }
 
     private async Task ProcessDeliveryAsync(
-        ClaimedNotificationDelivery claimedDelivery,
+        NotificationDeliveryClaim claimedDelivery,
         CancellationToken cancellationToken)
     {
         try
@@ -89,7 +89,7 @@ public sealed class NotificationDeliveryProcessor
     }
 
     private Task MarkDeliveredAsync(
-        ClaimedNotificationDelivery claimedDelivery,
+        NotificationDeliveryClaim claimedDelivery,
         CancellationToken cancellationToken)
     {
         var completedAt = DateTimeOffset.UtcNow;
@@ -105,7 +105,7 @@ public sealed class NotificationDeliveryProcessor
     }
 
     private Task MarkFailedAsync(
-        ClaimedNotificationDelivery claimedDelivery,
+        NotificationDeliveryClaim claimedDelivery,
         string? errorCode,
         string? errorMessage,
         CancellationToken cancellationToken)
@@ -140,7 +140,7 @@ public sealed class NotificationDeliveryProcessor
     }
 
     private async Task CompleteAttemptAsync(
-        ClaimedNotificationDelivery claimedDelivery,
+        NotificationDeliveryClaim claimedDelivery,
         Action<NotificationDeliveryAttemptState> updateState,
         CancellationToken cancellationToken)
     {

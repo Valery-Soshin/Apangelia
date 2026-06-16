@@ -1,9 +1,9 @@
-namespace Apangelia.Persistence.Postgres;
+namespace Apangelia.Persistence.Postgres.Entities;
 
 /// <summary>
 /// Входящее сообщение уведомления, принятое из внешней интеграции.
 /// </summary>
-public sealed class NotificationInboxMessage
+public sealed class NotificationInboxEntity
 {
     public Guid Id { get; set; }
 

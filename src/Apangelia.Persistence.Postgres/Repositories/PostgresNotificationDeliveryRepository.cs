@@ -17,7 +17,7 @@ public sealed class PostgresNotificationDeliveryRepository : INotificationDelive
         _context = context;
     }
 
-    public async Task<IReadOnlyCollection<ClaimedNotificationDelivery>> ClaimForProcessingAsync(
+    public async Task<IReadOnlyCollection<NotificationDeliveryClaim>> ClaimForProcessingAsync(
         int batchSize,
         DateTimeOffset claimedAt,
         CancellationToken cancellationToken)
@@ -153,7 +153,7 @@ public sealed class PostgresNotificationDeliveryRepository : INotificationDelive
             .ToArrayAsync(cancellationToken);
     }
 
-    private async Task<IReadOnlyCollection<ClaimedNotificationDelivery>> LoadClaimedDeliveriesAsync(
+    private async Task<IReadOnlyCollection<NotificationDeliveryClaim>> LoadClaimedDeliveriesAsync(
         IReadOnlyCollection<NotificationDelivery> deliveries,
         IReadOnlyCollection<NotificationDeliveryAttempt> attempts,
         CancellationToken cancellationToken)
@@ -181,7 +181,7 @@ public sealed class PostgresNotificationDeliveryRepository : INotificationDelive
         var attemptsByDeliveryId = attempts.ToDictionary(attempt => attempt.NotificationDeliveryId);
 
         return deliveries
-            .Select(delivery => new ClaimedNotificationDelivery(
+            .Select(delivery => new NotificationDeliveryClaim(
                 attemptsByDeliveryId[delivery.Id].Id,
                 new NotificationProviderRequest(
                     delivery,

@@ -1,4 +1,5 @@
 using Apangelia.Core;
+using Apangelia.Persistence.Postgres.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Apangelia.Persistence.Postgres;
@@ -31,7 +32,7 @@ public class AppDbContext : DbContext
     /// <summary>
     /// Входящие сообщения уведомлений для идемпотентной обработки.
     /// </summary>
-    public DbSet<NotificationInboxMessage> NotificationInboxMessages { get; set; }
+    public DbSet<NotificationInboxEntity> NotificationInboxMessages { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
