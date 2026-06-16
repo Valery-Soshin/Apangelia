@@ -3,6 +3,7 @@ using Apangelia.Application.Notifications;
 using Apangelia.Application.NotificationRoutes;
 using Apangelia.Application.SeedWork;
 using Apangelia.Core;
+using Apangelia.Application.NotificationInboxes;
 
 namespace Apangelia.Application.Commands.AcceptNotificationEvent;
 
@@ -38,9 +39,14 @@ public sealed class AcceptNotificationEventCommandHandler
         AcceptNotificationEventCommand command,
         CancellationToken cancellationToken)
     {
-        var notificationEvent = command.NotificationEvent;
+        var notificationInbox = new NotificationInbox(
+            command.Source,
+            command.EventType,
+            command.ExternalEventId,
+            command.RawPayloadJson,
+            command.OccurredAt);
 
-        var isNewEvent = await _inboxRepository.TryAddAsync(notificationEvent, cancellationToken);
+        var isNewEvent = await _inboxRepository.TryAddAsync(notificationInbox, cancellationToken);
         if (!isNewEvent)
         {
             return AcceptNotificationEventResult.Duplicate;
@@ -48,13 +54,13 @@ public sealed class AcceptNotificationEventCommandHandler
 
         var currentDate = DateTimeOffset.UtcNow;
 
-        var notification = MapToNotification(notificationEvent, currentDate);
+        var notification = MapToNotification(command, currentDate);
 
         await _notificationRepository.AddAsync(notification, cancellationToken);
 
         var routes = await _routeRepository.GetByUserAndInputProviderAsync(
             TemporaryUserId,
-            notificationEvent.Source,
+            command.Source,
             cancellationToken);
 
         if (routes.Count > 0)
@@ -69,16 +75,16 @@ public sealed class AcceptNotificationEventCommandHandler
         return AcceptNotificationEventResult.Accepted;
     }
 
-    private static Notification MapToNotification(NotificationEvent notificationEvent, DateTimeOffset createdAt)
+    private static Notification MapToNotification(AcceptNotificationEventCommand command, DateTimeOffset createdAt)
     {
         return new Notification
         {
-            Source = notificationEvent.Source,
-            EventType = notificationEvent.EventType,
-            ExternalEventId = notificationEvent.ExternalEventId,
-            Title = notificationEvent.Title,
-            Message = notificationEvent.Message,
-            OccurredAt = notificationEvent.OccurredAt,
+            Source = command.Source,
+            EventType = command.EventType,
+            ExternalEventId = command.ExternalEventId,
+            Title = command.Title,
+            Message = command.Message,
+            OccurredAt = command.OccurredAt,
             CreatedAt = createdAt
         };
     }

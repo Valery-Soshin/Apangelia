@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using Apangelia.Core;
+using Apangelia.Application.Commands.AcceptNotificationEvent;
 using Microsoft.Extensions.Options;
 
 namespace Apangelia.Integrations.GitHub;
@@ -37,8 +37,8 @@ public sealed class GitHubWebhookReceiver : IGitHubWebhookReceiver
             return ValueTask.FromResult(GitHubWebhookReceiveResult.Unauthorized());
         }
 
-        return TryCreateNotificationEvent(request, out var notificationEvent)
-            ? ValueTask.FromResult(GitHubWebhookReceiveResult.Accepted(notificationEvent))
+        return TryCreateCommand(request, out var command)
+            ? ValueTask.FromResult(GitHubWebhookReceiveResult.Accepted(command))
             : ValueTask.FromResult(GitHubWebhookReceiveResult.InvalidPayload());
     }
 
@@ -74,9 +74,9 @@ public sealed class GitHubWebhookReceiver : IGitHubWebhookReceiver
         return CryptographicOperations.FixedTimeEquals(providedHash, expectedHash);
     }
 
-    private static bool TryCreateNotificationEvent(
+    private static bool TryCreateCommand(
         GitHubWebhookReceiveRequest request,
-        out NotificationEvent notificationEvent)
+        out AcceptNotificationEventCommand command)
     {
         try
         {
@@ -84,7 +84,7 @@ public sealed class GitHubWebhookReceiver : IGitHubWebhookReceiver
 
             if (payload.RootElement.ValueKind != JsonValueKind.Object)
             {
-                notificationEvent = default!;
+                command = default!;
                 return false;
             }
 
@@ -93,7 +93,7 @@ public sealed class GitHubWebhookReceiver : IGitHubWebhookReceiver
                 ? $"GitHub {request.EventType}"
                 : $"GitHub {request.EventType}: {action}";
 
-            notificationEvent = new NotificationEvent(
+            command = new AcceptNotificationEventCommand(
                 Source,
                 request.EventType!,
                 request.DeliveryId!,
@@ -106,7 +106,7 @@ public sealed class GitHubWebhookReceiver : IGitHubWebhookReceiver
         }
         catch (JsonException)
         {
-            notificationEvent = default!;
+            command = default!;
             return false;
         }
     }

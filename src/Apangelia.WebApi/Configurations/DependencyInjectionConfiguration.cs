@@ -12,6 +12,7 @@ using Apangelia.Persistence.Postgres;
 using Apangelia.Persistence.Postgres.Repositories;
 using Apangelia.WebApi.Workers;
 using Microsoft.AspNetCore.HttpLogging;
+using Apangelia.Application.NotificationInboxes;
 
 namespace Apangelia.WebApi.Configurations;
 

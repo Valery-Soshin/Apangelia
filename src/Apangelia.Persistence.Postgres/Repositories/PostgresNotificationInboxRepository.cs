@@ -1,5 +1,4 @@
-using Apangelia.Application.Notifications;
-using Apangelia.Core;
+using Apangelia.Application.NotificationInboxes;
 using Apangelia.Persistence.Postgres;
 using Apangelia.Persistence.Postgres.ValueGenerators;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +17,7 @@ public sealed class PostgresNotificationInboxRepository : INotificationInboxRepo
         _context = context;
     }
 
-    public async Task<bool> TryAddAsync(NotificationEvent notificationEvent, CancellationToken cancellationToken)
+    public async Task<bool> TryAddAsync(NotificationInbox notificationInbox, CancellationToken cancellationToken)
     {
         var messageId = PostgresGuidV7ValueGenerator.Create();
 
@@ -26,8 +25,8 @@ public sealed class PostgresNotificationInboxRepository : INotificationInboxRepo
             INSERT INTO "NotificationInboxMessages"
                 ("Id", "Source", "EventType", "ExternalEventId", "RawPayloadJson", "OccurredAt")
             VALUES
-                ({messageId}, {notificationEvent.Source}, {notificationEvent.EventType}, {notificationEvent.ExternalEventId},
-                 CAST({notificationEvent.RawPayloadJson} AS jsonb), {notificationEvent.OccurredAt})
+                ({messageId}, {notificationInbox.Source}, {notificationInbox.EventType}, {notificationInbox.ExternalEventId},
+                 CAST({notificationInbox.RawPayloadJson} AS jsonb), {notificationInbox.OccurredAt})
             ON CONFLICT ("Source", "ExternalEventId") DO NOTHING
             """, cancellationToken);
 

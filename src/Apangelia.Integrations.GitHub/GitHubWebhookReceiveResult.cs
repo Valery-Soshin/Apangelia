@@ -1,4 +1,4 @@
-using Apangelia.Core;
+using Apangelia.Application.Commands.AcceptNotificationEvent;
 
 namespace Apangelia.Integrations.GitHub;
 
@@ -6,19 +6,19 @@ namespace Apangelia.Integrations.GitHub;
 /// Результат приема доставки GitHub webhook.
 /// </summary>
 /// <param name="Status">Статус приема доставки.</param>
-/// <param name="NotificationEvent">Нормализованное событие для успешной доставки.</param>
+/// <param name="Command">Команда приема нормализованного события для успешной доставки.</param>
 public sealed record GitHubWebhookReceiveResult(
     GitHubWebhookReceiveStatus Status,
-    NotificationEvent? NotificationEvent)
+    AcceptNotificationEventCommand? Command)
 {
     /// <summary>
     /// Создает успешный результат приема.
     /// </summary>
-    /// <param name="notificationEvent">Нормализованное событие уведомления.</param>
+    /// <param name="command">Команда приема нормализованного события уведомления.</param>
     /// <returns>Результат успешного приема.</returns>
-    public static GitHubWebhookReceiveResult Accepted(NotificationEvent notificationEvent)
+    public static GitHubWebhookReceiveResult Accepted(AcceptNotificationEventCommand command)
     {
-        return new GitHubWebhookReceiveResult(GitHubWebhookReceiveStatus.Accepted, notificationEvent);
+        return new GitHubWebhookReceiveResult(GitHubWebhookReceiveStatus.Accepted, command);
     }
 
     /// <summary>

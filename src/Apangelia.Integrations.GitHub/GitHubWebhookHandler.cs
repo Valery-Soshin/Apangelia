@@ -28,7 +28,7 @@ public sealed class GitHubWebhookHandler : IGitHubWebhookHandler
         }
 
         var handlingResult = await _commandDispatcher.HandleAsync(
-            new AcceptNotificationEventCommand(receiveResult.NotificationEvent!),
+            receiveResult.Command!,
             cancellationToken);
 
         return handlingResult switch
