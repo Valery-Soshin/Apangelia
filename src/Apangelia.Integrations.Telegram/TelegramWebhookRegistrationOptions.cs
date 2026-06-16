@@ -24,4 +24,22 @@ public sealed class TelegramWebhookRegistrationOptions
     /// Признак удаления ожидающих обновлений при регистрации webhook.
     /// </summary>
     public bool DropPendingUpdates { get; init; }
+
+    /// <summary>
+    /// Проверяет настройки автоматической регистрации Telegram webhook.
+    /// </summary>
+    /// <param name="options">Настройки регистрации Telegram webhook.</param>
+    /// <returns><see langword="true" />, если регистрация выключена или включена с корректными параметрами.</returns>
+    public static bool IsValidRegistration(TelegramWebhookRegistrationOptions options)
+    {
+        if (!options.Enabled)
+        {
+            return true;
+        }
+
+        return Uri.TryCreate(options.PublicUrl, UriKind.Absolute, out var publicUrl)
+            && string.Equals(publicUrl.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase)
+            && options.AllowedUpdates is { Length: > 0 }
+            && options.AllowedUpdates.All(updateType => !string.IsNullOrWhiteSpace(updateType));
+    }
 }

@@ -1,6 +1,6 @@
 using Apangelia.Application.Shared.CommandBase;
 
-namespace Apangelia.Application.Notifications.AcceptNotificationEvent;
+namespace Apangelia.Application.Notifications.AcceptNotification;
 
 /// <summary>
 /// Команда приема нормализованного события уведомления из внешней интеграции.
@@ -12,7 +12,7 @@ namespace Apangelia.Application.Notifications.AcceptNotificationEvent;
 /// <param name="Message">Дополнительное сообщение уведомления, если источник его предоставил.</param>
 /// <param name="RawPayloadJson">Исходное JSON-тело события.</param>
 /// <param name="OccurredAt">Время возникновения или приема события.</param>
-public sealed record AcceptNotificationEventCommand(
+public sealed record AcceptNotificationCommand(
     string Source,
     string EventType,
     string ExternalEventId,

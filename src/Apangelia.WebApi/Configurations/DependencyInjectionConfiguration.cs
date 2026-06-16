@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.HttpLogging;
 using Apangelia.Application.NotificationDeliveries.ProcessNotificationDeliveryBatch;
 using Apangelia.Application.Abstractions.Persistence;
 using Apangelia.Application.Abstractions.Providers;
-using Apangelia.Application.Notifications.AcceptNotificationEvent;
+using Apangelia.Application.Notifications.AcceptNotification;
 using Apangelia.Application.Notifications.RegisterNotificationRoute;
 using Apangelia.Application.Shared.PipelineBehaviors;
 using Apangelia.Application.Shared.CommandBase;
@@ -45,7 +45,7 @@ public static class DependencyInjectionConfiguration
         services.AddScoped<ICommandDispatcher, CommandDispatcher>();
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingPipelineBehavior<,>));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionPipelineBehavior<,>));
-        services.AddScoped<ICommandHandler<AcceptNotificationEventCommand, AcceptNotificationEventResult>, AcceptNotificationEventCommandHandler>();
+        services.AddScoped<ICommandHandler<AcceptNotificationCommand, AcceptNotificationEventResult>, AcceptNotificationEventCommandHandler>();
         services.AddScoped<ICommandHandler<RegisterNotificationRouteCommand, RegisterNotificationRouteResult>, RegisterNotificationRouteCommandHandler>();
         services.AddScoped<ICommandHandler<ProcessNotificationDeliveryBatchCommand, int>, ProcessNotificationDeliveryBatchCommandHandler>();
         services.AddScoped<INotificationProviderResolver, NotificationProviderResolver>();
@@ -82,14 +82,14 @@ public static class DependencyInjectionConfiguration
     {
         services.AddOptions<TelegramNotificationOptions>()
             .Bind(configuration.GetSection("Integrations:Telegram"))
-            .Validate(IsValidTelegramApiBaseUrl, "Telegram API base URL must be an absolute HTTPS URL.")
+            .Validate(TelegramNotificationOptions.IsValidApiBaseUrl, "Telegram API base URL must be an absolute HTTPS URL.")
             .Validate(options => !string.IsNullOrWhiteSpace(options.BotToken), "Telegram bot token must be configured.")
-            .Validate(IsValidTelegramWebhookSecretToken, "Telegram webhook secret token must contain 1-256 characters: A-Z, a-z, 0-9, _ or -.")
+            .Validate(TelegramNotificationOptions.IsValidWebhookSecretToken, "Telegram webhook secret token must contain 1-256 characters: A-Z, a-z, 0-9, _ or -.")
             .ValidateOnStart();
 
         services.AddOptions<TelegramWebhookRegistrationOptions>()
             .Bind(configuration.GetSection("Integrations:Telegram:WebhookRegistration"))
-            .Validate(IsValidTelegramWebhookRegistration, "Telegram webhook registration requires an absolute HTTPS public URL and at least one allowed update type when enabled.")
+            .Validate(TelegramWebhookRegistrationOptions.IsValidRegistration, "Telegram webhook registration requires an absolute HTTPS public URL and at least one allowed update type when enabled.")
             .ValidateOnStart();
 
         services.AddHttpClient<ITelegramBotClient, TelegramBotClient>()
@@ -101,43 +101,6 @@ public static class DependencyInjectionConfiguration
         services.AddHostedService<TelegramWebhookRegistrationWorker>();
 
         return services;
-    }
-
-    private static bool IsValidTelegramApiBaseUrl(TelegramNotificationOptions options)
-    {
-        return Uri.TryCreate(options.ApiBaseUrl, UriKind.Absolute, out var apiBaseUrl)
-            && string.Equals(apiBaseUrl.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static bool IsValidTelegramWebhookSecretToken(TelegramNotificationOptions options)
-    {
-        var token = options.WebhookSecretToken;
-
-        return !string.IsNullOrWhiteSpace(token)
-            && token.Length is >= 1 and <= 256
-            && token.All(IsTelegramSecretTokenCharacter);
-    }
-
-    private static bool IsTelegramSecretTokenCharacter(char value)
-    {
-        return value is >= 'A' and <= 'Z'
-            or >= 'a' and <= 'z'
-            or >= '0' and <= '9'
-            or '_'
-            or '-';
-    }
-
-    private static bool IsValidTelegramWebhookRegistration(TelegramWebhookRegistrationOptions options)
-    {
-        if (!options.Enabled)
-        {
-            return true;
-        }
-
-        return Uri.TryCreate(options.PublicUrl, UriKind.Absolute, out var publicUrl)
-            && string.Equals(publicUrl.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase)
-            && options.AllowedUpdates is { Length: > 0 }
-            && options.AllowedUpdates.All(updateType => !string.IsNullOrWhiteSpace(updateType));
     }
 
     private static IServiceCollection AddNotificationDeliveryWorker(this IServiceCollection services, IConfiguration configuration)

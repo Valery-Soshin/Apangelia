@@ -1,4 +1,4 @@
-namespace Apangelia.Application.Notifications.AcceptNotificationEvent;
+namespace Apangelia.Application.Notifications.AcceptNotification;
 
 /// <summary>
 /// Результат выполнения команды приема события уведомления.

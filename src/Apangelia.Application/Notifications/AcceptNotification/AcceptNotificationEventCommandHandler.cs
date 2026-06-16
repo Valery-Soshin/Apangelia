@@ -4,13 +4,13 @@ using Apangelia.Application.Abstractions.Persistence;
 using Apangelia.Application.Abstractions.Persistence.Models;
 using Apangelia.Application.Shared.CommandBase;
 
-namespace Apangelia.Application.Notifications.AcceptNotificationEvent;
+namespace Apangelia.Application.Notifications.AcceptNotification;
 
 /// <summary>
 /// Стандартный обработчик команды приема нормализованного события уведомления.
 /// </summary>
 public sealed class AcceptNotificationEventCommandHandler
-    : ICommandHandler<AcceptNotificationEventCommand, AcceptNotificationEventResult>
+    : ICommandHandler<AcceptNotificationCommand, AcceptNotificationEventResult>
 {
     private const int DefaultMaxDeliveryAttempts = 5;
 
@@ -32,7 +32,7 @@ public sealed class AcceptNotificationEventCommandHandler
     }
 
     public async Task<AcceptNotificationEventResult> HandleAsync(
-        AcceptNotificationEventCommand command,
+        AcceptNotificationCommand command,
         CancellationToken cancellationToken)
     {
         var notificationInbox = new NotificationInbox(
@@ -71,7 +71,7 @@ public sealed class AcceptNotificationEventCommandHandler
         return AcceptNotificationEventResult.Accepted;
     }
 
-    private static Notification MapToNotification(AcceptNotificationEventCommand command, DateTimeOffset createdAt)
+    private static Notification MapToNotification(AcceptNotificationCommand command, DateTimeOffset createdAt)
     {
         return new Notification
         {

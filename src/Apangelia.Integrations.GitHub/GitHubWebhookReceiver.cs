@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using Apangelia.Application.Notifications.AcceptNotificationEvent;
+using Apangelia.Application.Notifications.AcceptNotification;
 using Microsoft.Extensions.Options;
 
 namespace Apangelia.Integrations.GitHub;
@@ -76,7 +76,7 @@ public sealed class GitHubWebhookReceiver : IGitHubWebhookReceiver
 
     private static bool TryCreateCommand(
         GitHubWebhookReceiveRequest request,
-        out AcceptNotificationEventCommand command)
+        out AcceptNotificationCommand command)
     {
         try
         {
@@ -93,7 +93,7 @@ public sealed class GitHubWebhookReceiver : IGitHubWebhookReceiver
                 ? $"GitHub {request.EventType}"
                 : $"GitHub {request.EventType}: {action}";
 
-            command = new AcceptNotificationEventCommand(
+            command = new AcceptNotificationCommand(
                 Source,
                 request.EventType!,
                 request.DeliveryId!,

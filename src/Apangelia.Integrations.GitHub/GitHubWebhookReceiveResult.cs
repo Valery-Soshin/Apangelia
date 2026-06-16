@@ -1,4 +1,4 @@
-using Apangelia.Application.Notifications.AcceptNotificationEvent;
+using Apangelia.Application.Notifications.AcceptNotification;
 
 namespace Apangelia.Integrations.GitHub;
 
@@ -9,14 +9,14 @@ namespace Apangelia.Integrations.GitHub;
 /// <param name="Command">Команда приема нормализованного события для успешной доставки.</param>
 public sealed record GitHubWebhookReceiveResult(
     GitHubWebhookReceiveStatus Status,
-    AcceptNotificationEventCommand? Command)
+    AcceptNotificationCommand? Command)
 {
     /// <summary>
     /// Создает успешный результат приема.
     /// </summary>
     /// <param name="command">Команда приема нормализованного события уведомления.</param>
     /// <returns>Результат успешного приема.</returns>
-    public static GitHubWebhookReceiveResult Accepted(AcceptNotificationEventCommand command)
+    public static GitHubWebhookReceiveResult Accepted(AcceptNotificationCommand command)
     {
         return new GitHubWebhookReceiveResult(GitHubWebhookReceiveStatus.Accepted, command);
     }

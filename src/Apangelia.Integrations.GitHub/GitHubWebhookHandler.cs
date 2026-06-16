@@ -1,4 +1,4 @@
-using Apangelia.Application.Notifications.AcceptNotificationEvent;
+using Apangelia.Application.Notifications.AcceptNotification;
 using Apangelia.Application.Shared.CommandBase;
 
 namespace Apangelia.Integrations.GitHub;
