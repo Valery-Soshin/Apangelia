@@ -1,6 +1,6 @@
 using Apangelia.Core;
 
-namespace Apangelia.Application.Repositories;
+namespace Apangelia.Application.NotificationDeliveries;
 
 /// <summary>
 /// Состояние доставки и ее попытки, загруженное для сохранения результата обработки.

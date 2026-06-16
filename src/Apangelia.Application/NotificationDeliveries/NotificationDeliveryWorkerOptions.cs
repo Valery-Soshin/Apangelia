@@ -1,4 +1,4 @@
-namespace Apangelia.Application.Notifications;
+namespace Apangelia.Application.NotificationDeliveries;
 
 /// <summary>
 /// Настройки фонового worker-а доставки уведомлений.

@@ -1,4 +1,4 @@
-using Apangelia.Application.Notifications;
+using Apangelia.Application.NotificationDeliveries;
 using Apangelia.Application.SeedWork;
 
 namespace Apangelia.Application.Commands.ProcessNotificationDeliveryBatch;

@@ -1,4 +1,4 @@
-namespace Apangelia.Application.Notifications;
+namespace Apangelia.Application.NotificationProviders;
 
 /// <summary>
 /// Находит исходящий провайдер уведомлений по ключу маршрута.

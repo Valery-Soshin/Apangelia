@@ -1,4 +1,4 @@
-namespace Apangelia.Application.Repositories;
+namespace Apangelia.Application.SeedWork;
 
 /// <summary>
 /// Выполняет операции приложения в общей транзакции.

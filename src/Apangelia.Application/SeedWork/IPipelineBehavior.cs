@@ -5,7 +5,7 @@ namespace Apangelia.Application.SeedWork;
 /// </summary>
 /// <typeparam name="TCommand">Тип команды приложения.</typeparam>
 /// <typeparam name="TResult">Тип результата выполнения команды.</typeparam>
-public interface ICommandPipelineBehavior<in TCommand, TResult>
+public interface IPipelineBehavior<in TCommand, TResult>
     where TCommand : ICommand<TResult>
 {
     /// <summary>

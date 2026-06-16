@@ -1,8 +1,10 @@
 using Apangelia.Application.Commands.AcceptNotificationEvent;
 using Apangelia.Application.Commands.ProcessNotificationDeliveryBatch;
-using Apangelia.Application.GlobalBehaviors;
+using Apangelia.Application.PipelineBehaviors;
+using Apangelia.Application.NotificationDeliveries;
+using Apangelia.Application.NotificationProviders;
 using Apangelia.Application.Notifications;
-using Apangelia.Application.Repositories;
+using Apangelia.Application.NotificationRoutes;
 using Apangelia.Application.SeedWork;
 using Apangelia.Integrations.GitHub;
 using Apangelia.Integrations.Telegram;
@@ -40,8 +42,8 @@ public static class DependencyInjectionConfiguration
     private static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddScoped<ICommandDispatcher, CommandDispatcher>();
-        services.AddScoped(typeof(ICommandPipelineBehavior<,>), typeof(LoggingCommandPipelineBehavior<,>));
-        services.AddScoped(typeof(ICommandPipelineBehavior<,>), typeof(TransactionCommandPipelineBehavior<,>));
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingPipelineBehavior<,>));
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionPipelineBehavior<,>));
         services.AddScoped<ICommandHandler<AcceptNotificationEventCommand, AcceptNotificationEventResult>, AcceptNotificationEventCommandHandler>();
         services.AddScoped<ICommandHandler<ProcessNotificationDeliveryBatchCommand, int>, ProcessNotificationDeliveryBatchCommandHandler>();
         services.AddScoped<INotificationProviderResolver, NotificationProviderResolver>();

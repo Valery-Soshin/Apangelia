@@ -1,4 +1,6 @@
-namespace Apangelia.Application.Notifications;
+using Apangelia.Application.NotificationProviders;
+
+namespace Apangelia.Application.NotificationDeliveries;
 
 /// <summary>
 /// Задание доставки, закрепленное за worker-ом вместе с начатой попыткой отправки.
@@ -7,4 +9,4 @@ namespace Apangelia.Application.Notifications;
 /// <param name="SendRequest">Данные для отправки уведомления исходящим провайдером.</param>
 public sealed record ClaimedNotificationDelivery(
     Guid AttemptId,
-    NotificationSendRequest SendRequest);
+    NotificationProviderRequest SendRequest);

@@ -1,20 +1,19 @@
-using Apangelia.Application.Repositories;
 using Apangelia.Application.SeedWork;
 
-namespace Apangelia.Application.GlobalBehaviors;
+namespace Apangelia.Application.PipelineBehaviors;
 
 /// <summary>
 /// Выполняет команду приложения внутри транзакционной единицы работы.
 /// </summary>
 /// <typeparam name="TCommand">Тип команды приложения.</typeparam>
 /// <typeparam name="TResult">Тип результата выполнения команды.</typeparam>
-public sealed class TransactionCommandPipelineBehavior<TCommand, TResult>
-    : ICommandPipelineBehavior<TCommand, TResult>
+public sealed class TransactionPipelineBehavior<TCommand, TResult>
+    : IPipelineBehavior<TCommand, TResult>
     where TCommand : ICommand<TResult>
 {
     private readonly IUnitOfWork _unitOfWork;
 
-    public TransactionCommandPipelineBehavior(IUnitOfWork unitOfWork)
+    public TransactionPipelineBehavior(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }

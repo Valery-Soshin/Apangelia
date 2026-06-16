@@ -1,4 +1,4 @@
-namespace Apangelia.Application.Notifications;
+namespace Apangelia.Application.NotificationProviders;
 
 /// <summary>
 /// Результат отправки уведомления исходящим провайдером.
@@ -6,7 +6,7 @@ namespace Apangelia.Application.Notifications;
 /// <param name="IsSuccess">Признак успешной отправки.</param>
 /// <param name="ErrorCode">Машиночитаемый код ошибки отправки.</param>
 /// <param name="ErrorMessage">Диагностическое сообщение ошибки отправки.</param>
-public sealed record NotificationSendResult(
+public sealed record NotificationProviderResult(
     bool IsSuccess,
     string? ErrorCode = null,
     string? ErrorMessage = null)
@@ -15,9 +15,9 @@ public sealed record NotificationSendResult(
     /// Создает успешный результат отправки.
     /// </summary>
     /// <returns>Успешный результат отправки.</returns>
-    public static NotificationSendResult Success()
+    public static NotificationProviderResult Success()
     {
-        return new NotificationSendResult(true);
+        return new NotificationProviderResult(true);
     }
 
     /// <summary>
@@ -26,8 +26,8 @@ public sealed record NotificationSendResult(
     /// <param name="errorCode">Машиночитаемый код ошибки.</param>
     /// <param name="errorMessage">Диагностическое сообщение ошибки.</param>
     /// <returns>Неуспешный результат отправки.</returns>
-    public static NotificationSendResult Failure(string? errorCode, string? errorMessage)
+    public static NotificationProviderResult Failure(string? errorCode, string? errorMessage)
     {
-        return new NotificationSendResult(false, errorCode, errorMessage);
+        return new NotificationProviderResult(false, errorCode, errorMessage);
     }
 }

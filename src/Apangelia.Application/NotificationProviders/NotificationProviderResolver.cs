@@ -1,4 +1,4 @@
-namespace Apangelia.Application.Notifications;
+namespace Apangelia.Application.NotificationProviders;
 
 /// <summary>
 /// Стандартный resolver исходящих провайдеров уведомлений из контейнера зависимостей.

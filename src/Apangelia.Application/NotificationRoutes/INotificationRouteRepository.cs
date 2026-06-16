@@ -1,6 +1,6 @@
 using Apangelia.Core;
 
-namespace Apangelia.Application.Repositories;
+namespace Apangelia.Application.NotificationRoutes;
 
 /// <summary>
 /// Читает маршруты доставки уведомлений, доступные слою приложения.

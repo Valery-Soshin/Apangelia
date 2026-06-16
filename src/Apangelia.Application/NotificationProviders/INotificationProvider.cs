@@ -1,4 +1,4 @@
-namespace Apangelia.Application.Notifications;
+namespace Apangelia.Application.NotificationProviders;
 
 /// <summary>
 /// Отправляет уведомления во внешний исходящий канал.
@@ -16,7 +16,7 @@ public interface INotificationProvider
     /// <param name="request">Данные уведомления, маршрута и задания доставки.</param>
     /// <param name="cancellationToken">Токен отмены операции.</param>
     /// <returns>Результат попытки отправки.</returns>
-    Task<NotificationSendResult> SendAsync(
-        NotificationSendRequest request,
+    Task<NotificationProviderResult> SendAsync(
+        NotificationProviderRequest request,
         CancellationToken cancellationToken);
 }

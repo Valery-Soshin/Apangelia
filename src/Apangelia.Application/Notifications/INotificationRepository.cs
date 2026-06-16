@@ -1,6 +1,6 @@
 using Apangelia.Core;
 
-namespace Apangelia.Application.Repositories;
+namespace Apangelia.Application.Notifications;
 
 /// <summary>
 /// Сохраняет созданные уведомления.

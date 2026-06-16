@@ -1,4 +1,5 @@
 using Apangelia.Application.Commands.ProcessNotificationDeliveryBatch;
+using Apangelia.Application.NotificationDeliveries;
 using Apangelia.Application.SeedWork;
 using Microsoft.Extensions.Options;
 

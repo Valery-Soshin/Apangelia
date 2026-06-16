@@ -1,3 +1,4 @@
+using Apangelia.ServiceDefaults;
 using Apangelia.WebApi.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);

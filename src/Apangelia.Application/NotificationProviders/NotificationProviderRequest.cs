@@ -1,6 +1,6 @@
 using Apangelia.Core;
 
-namespace Apangelia.Application.Notifications;
+namespace Apangelia.Application.NotificationProviders;
 
 /// <summary>
 /// Данные, необходимые исходящему провайдеру для отправки уведомления.
@@ -8,7 +8,7 @@ namespace Apangelia.Application.Notifications;
 /// <param name="Delivery">Задание доставки, в рамках которого выполняется отправка.</param>
 /// <param name="Notification">Отправляемое уведомление.</param>
 /// <param name="Route">Маршрут, определяющий исходящий провайдер и назначение.</param>
-public sealed record NotificationSendRequest(
+public sealed record NotificationProviderRequest(
     NotificationDelivery Delivery,
     Notification Notification,
     NotificationRoute Route);

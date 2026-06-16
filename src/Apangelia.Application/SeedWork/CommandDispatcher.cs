@@ -53,8 +53,8 @@ public sealed class CommandDispatcher : ICommandDispatcher
                 $"Command handler for command type '{typeof(TCommand).FullName}' and result type '{typeof(TResult).FullName}' is not registered.");
         }
 
-        var behaviors = _serviceProvider.GetService(typeof(IEnumerable<ICommandPipelineBehavior<TCommand, TResult>>));
-        var pipelineBehaviors = behaviors is IEnumerable<ICommandPipelineBehavior<TCommand, TResult>> typedBehaviors
+        var behaviors = _serviceProvider.GetService(typeof(IEnumerable<IPipelineBehavior<TCommand, TResult>>));
+        var pipelineBehaviors = behaviors is IEnumerable<IPipelineBehavior<TCommand, TResult>> typedBehaviors
             ? typedBehaviors
             : [];
 

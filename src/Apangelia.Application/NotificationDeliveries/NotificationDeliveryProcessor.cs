@@ -1,9 +1,9 @@
-using Apangelia.Application.Repositories;
+using Apangelia.Application.NotificationProviders;
 using Apangelia.Application.SeedWork;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Apangelia.Application.Notifications;
+namespace Apangelia.Application.NotificationDeliveries;
 
 /// <summary>
 /// Обрабатывает очередь доставок уведомлений и обновляет состояние попыток отправки.

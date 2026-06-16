@@ -1,5 +1,5 @@
-using Apangelia.Application.Notifications;
-using Apangelia.Application.Repositories;
+using Apangelia.Application.NotificationDeliveries;
+using Apangelia.Application.NotificationProviders;
 using Apangelia.Core;
 using Microsoft.EntityFrameworkCore;
 
@@ -183,7 +183,7 @@ public sealed class PostgresNotificationDeliveryRepository : INotificationDelive
         return deliveries
             .Select(delivery => new ClaimedNotificationDelivery(
                 attemptsByDeliveryId[delivery.Id].Id,
-                new NotificationSendRequest(
+                new NotificationProviderRequest(
                     delivery,
                     notifications[delivery.NotificationId],
                     routes[delivery.RouteId])))

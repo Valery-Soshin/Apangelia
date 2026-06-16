@@ -1,4 +1,4 @@
-﻿namespace Apangelia.Application.Notifications;
+﻿namespace Apangelia.Application.NotificationDeliveries;
 
 internal static class NotificationDeliveryProcessorHelper
 {

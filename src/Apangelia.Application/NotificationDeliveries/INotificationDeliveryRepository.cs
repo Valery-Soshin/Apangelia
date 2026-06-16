@@ -1,7 +1,6 @@
-using Apangelia.Application.Notifications;
 using Apangelia.Core;
 
-namespace Apangelia.Application.Repositories;
+namespace Apangelia.Application.NotificationDeliveries;
 
 /// <summary>
 /// Сохраняет и выдает задания доставки уведомлений.

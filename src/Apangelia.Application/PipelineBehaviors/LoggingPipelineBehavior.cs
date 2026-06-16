@@ -2,20 +2,20 @@ using System.Diagnostics;
 using Apangelia.Application.SeedWork;
 using Microsoft.Extensions.Logging;
 
-namespace Apangelia.Application.GlobalBehaviors;
+namespace Apangelia.Application.PipelineBehaviors;
 
 /// <summary>
 /// Логирует выполнение команды приложения без записи полезной нагрузки команды и результата.
 /// </summary>
 /// <typeparam name="TCommand">Тип команды приложения.</typeparam>
 /// <typeparam name="TResult">Тип результата выполнения команды.</typeparam>
-public sealed class LoggingCommandPipelineBehavior<TCommand, TResult>
-    : ICommandPipelineBehavior<TCommand, TResult>
+public sealed class LoggingPipelineBehavior<TCommand, TResult>
+    : IPipelineBehavior<TCommand, TResult>
     where TCommand : ICommand<TResult>
 {
-    private readonly ILogger<LoggingCommandPipelineBehavior<TCommand, TResult>> _logger;
+    private readonly ILogger<LoggingPipelineBehavior<TCommand, TResult>> _logger;
 
-    public LoggingCommandPipelineBehavior(ILogger<LoggingCommandPipelineBehavior<TCommand, TResult>> logger)
+    public LoggingPipelineBehavior(ILogger<LoggingPipelineBehavior<TCommand, TResult>> logger)
     {
         _logger = logger;
     }

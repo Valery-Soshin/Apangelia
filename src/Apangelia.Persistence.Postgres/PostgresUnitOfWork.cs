@@ -1,4 +1,4 @@
-using Apangelia.Application.Repositories;
+using Apangelia.Application.SeedWork;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Apangelia.Persistence.Postgres;
