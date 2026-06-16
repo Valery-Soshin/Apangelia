@@ -61,71 +61,27 @@ public sealed class PostgresNotificationDeliveryRepository : INotificationDelive
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task MarkDeliveredAsync(
+    public async Task<NotificationDeliveryAttemptState> GetAttemptStateAsync(
         Guid deliveryId,
         Guid attemptId,
-        DateTimeOffset completedAt,
         CancellationToken cancellationToken)
     {
-        var (delivery, attempt) = await GetDeliveryAndAttemptAsync(deliveryId, attemptId, cancellationToken);
+        var delivery = await _context.NotificationDeliveries
+            .FirstAsync(currentDelivery => currentDelivery.Id == deliveryId, cancellationToken);
 
-        attempt.FinishedAt = completedAt;
-        attempt.ErrorCode = null;
-        attempt.ErrorMessage = null;
+        var attempt = await _context.NotificationDeliveryAttempts
+            .FirstAsync(currentAttempt =>
+                currentAttempt.Id == attemptId
+                && currentAttempt.NotificationDeliveryId == deliveryId,
+                cancellationToken);
 
-        delivery.Status = NotificationDeliveryStatus.Delivered;
-        delivery.DeliveredAt = completedAt;
-        delivery.FailedAt = null;
-        delivery.NextAttemptAt = null;
-        delivery.UpdatedAt = completedAt;
-
-        await _context.SaveChangesAsync(cancellationToken);
+        return new NotificationDeliveryAttemptState(delivery, attempt);
     }
 
-    public async Task ScheduleRetryAsync(
-        Guid deliveryId,
-        Guid attemptId,
-        DateTimeOffset completedAt,
-        DateTimeOffset nextAttemptAt,
-        string? errorCode,
-        string? errorMessage,
+    public async Task SaveAttemptStateAsync(
+        NotificationDeliveryAttemptState state,
         CancellationToken cancellationToken)
     {
-        var (delivery, attempt) = await GetDeliveryAndAttemptAsync(deliveryId, attemptId, cancellationToken);
-
-        attempt.FinishedAt = completedAt;
-        attempt.ErrorCode = errorCode;
-        attempt.ErrorMessage = errorMessage;
-
-        delivery.Status = NotificationDeliveryStatus.RetryScheduled;
-        delivery.DeliveredAt = null;
-        delivery.FailedAt = null;
-        delivery.NextAttemptAt = nextAttemptAt;
-        delivery.UpdatedAt = completedAt;
-
-        await _context.SaveChangesAsync(cancellationToken);
-    }
-
-    public async Task MoveToDeadLetterAsync(
-        Guid deliveryId,
-        Guid attemptId,
-        DateTimeOffset completedAt,
-        string? errorCode,
-        string? errorMessage,
-        CancellationToken cancellationToken)
-    {
-        var (delivery, attempt) = await GetDeliveryAndAttemptAsync(deliveryId, attemptId, cancellationToken);
-
-        attempt.FinishedAt = completedAt;
-        attempt.ErrorCode = errorCode;
-        attempt.ErrorMessage = errorMessage;
-
-        delivery.Status = NotificationDeliveryStatus.DeadLetter;
-        delivery.DeliveredAt = null;
-        delivery.FailedAt = completedAt;
-        delivery.NextAttemptAt = null;
-        delivery.UpdatedAt = completedAt;
-
         await _context.SaveChangesAsync(cancellationToken);
     }
 
@@ -234,20 +190,4 @@ public sealed class PostgresNotificationDeliveryRepository : INotificationDelive
             .ToArray();
     }
 
-    private async Task<(NotificationDelivery Delivery, NotificationDeliveryAttempt Attempt)> GetDeliveryAndAttemptAsync(
-        Guid deliveryId,
-        Guid attemptId,
-        CancellationToken cancellationToken)
-    {
-        var delivery = await _context.NotificationDeliveries
-            .FirstAsync(currentDelivery => currentDelivery.Id == deliveryId, cancellationToken);
-
-        var attempt = await _context.NotificationDeliveryAttempts
-            .FirstAsync(currentAttempt =>
-                currentAttempt.Id == attemptId
-                && currentAttempt.NotificationDeliveryId == deliveryId,
-                cancellationToken);
-
-        return (delivery, attempt);
-    }
 }

@@ -34,4 +34,28 @@ public sealed class NotificationDeliveryAttempt
     /// Сообщение об ошибке попытки доставки.
     /// </summary>
     public string? ErrorMessage { get; set; }
+
+    /// <summary>
+    /// Помечает попытку доставки успешно завершенной.
+    /// </summary>
+    /// <param name="completedAt">Время завершения попытки доставки.</param>
+    public void MarkSucceeded(DateTimeOffset completedAt)
+    {
+        FinishedAt = completedAt;
+        ErrorCode = null;
+        ErrorMessage = null;
+    }
+
+    /// <summary>
+    /// Помечает попытку доставки завершенной с ошибкой.
+    /// </summary>
+    /// <param name="completedAt">Время завершения попытки доставки.</param>
+    /// <param name="errorCode">Машиночитаемый код ошибки.</param>
+    /// <param name="errorMessage">Диагностическое сообщение ошибки.</param>
+    public void MarkFailed(DateTimeOffset completedAt, string? errorCode, string? errorMessage)
+    {
+        FinishedAt = completedAt;
+        ErrorCode = errorCode;
+        ErrorMessage = errorMessage;
+    }
 }

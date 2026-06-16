@@ -64,4 +64,44 @@ public sealed class NotificationDelivery
     /// Время последнего изменения задачи доставки.
     /// </summary>
     public DateTimeOffset? UpdatedAt { get; set; }
+
+    /// <summary>
+    /// Помечает доставку успешно выполненной.
+    /// </summary>
+    /// <param name="completedAt">Время успешного завершения доставки.</param>
+    public void MarkDelivered(DateTimeOffset completedAt)
+    {
+        Status = NotificationDeliveryStatus.Delivered;
+        DeliveredAt = completedAt;
+        FailedAt = null;
+        NextAttemptAt = null;
+        UpdatedAt = completedAt;
+    }
+
+    /// <summary>
+    /// Планирует повторную попытку доставки после сбоя.
+    /// </summary>
+    /// <param name="completedAt">Время завершения неуспешной попытки.</param>
+    /// <param name="nextAttemptAt">Время следующей попытки доставки.</param>
+    public void ScheduleRetry(DateTimeOffset completedAt, DateTimeOffset nextAttemptAt)
+    {
+        Status = NotificationDeliveryStatus.RetryScheduled;
+        DeliveredAt = null;
+        FailedAt = null;
+        NextAttemptAt = nextAttemptAt;
+        UpdatedAt = completedAt;
+    }
+
+    /// <summary>
+    /// Переводит доставку в хранилище необрабатываемых задач.
+    /// </summary>
+    /// <param name="completedAt">Время окончательного сбоя доставки.</param>
+    public void MoveToDeadLetter(DateTimeOffset completedAt)
+    {
+        Status = NotificationDeliveryStatus.DeadLetter;
+        DeliveredAt = null;
+        FailedAt = completedAt;
+        NextAttemptAt = null;
+        UpdatedAt = completedAt;
+    }
 }

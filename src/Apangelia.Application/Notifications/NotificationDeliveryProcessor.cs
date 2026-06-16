@@ -94,10 +94,13 @@ public sealed class NotificationDeliveryProcessor
     {
         var completedAt = DateTimeOffset.UtcNow;
 
-        return _deliveryRepository.MarkDeliveredAsync(
-            claimedDelivery.SendRequest.Delivery.Id,
-            claimedDelivery.AttemptId,
-            completedAt,
+        return CompleteAttemptAsync(
+            claimedDelivery,
+            state =>
+            {
+                state.Attempt.MarkSucceeded(completedAt);
+                state.Delivery.MarkDelivered(completedAt);
+            },
             cancellationToken);
     }
 
@@ -113,25 +116,41 @@ public sealed class NotificationDeliveryProcessor
 
         if (delivery.AttemptCount >= _options.MaxAttempts)
         {
-            return _deliveryRepository.MoveToDeadLetterAsync(
-                delivery.Id,
-                claimedDelivery.AttemptId,
-                completedAt,
-                normalizedErrorCode,
-                errorMessage,
+            return CompleteAttemptAsync(
+                claimedDelivery,
+                state =>
+                {
+                    state.Attempt.MarkFailed(completedAt, normalizedErrorCode, errorMessage);
+                    state.Delivery.MoveToDeadLetter(completedAt);
+                },
                 cancellationToken);
         }
 
         var nextAttemptAt = completedAt + NotificationDeliveryProcessorHelper
             .CalculateRetryDelay(delivery.AttemptCount, _options.InitialRetryDelay);
 
-        return _deliveryRepository.ScheduleRetryAsync(
-            delivery.Id,
-            claimedDelivery.AttemptId,
-            completedAt,
-            nextAttemptAt,
-            normalizedErrorCode,
-            errorMessage,
+        return CompleteAttemptAsync(
+            claimedDelivery,
+            state =>
+            {
+                state.Attempt.MarkFailed(completedAt, normalizedErrorCode, errorMessage);
+                state.Delivery.ScheduleRetry(completedAt, nextAttemptAt);
+            },
             cancellationToken);
+    }
+
+    private async Task CompleteAttemptAsync(
+        ClaimedNotificationDelivery claimedDelivery,
+        Action<NotificationDeliveryAttemptState> updateState,
+        CancellationToken cancellationToken)
+    {
+        var state = await _deliveryRepository.GetAttemptStateAsync(
+            claimedDelivery.SendRequest.Delivery.Id,
+            claimedDelivery.AttemptId,
+            cancellationToken);
+
+        updateState(state);
+
+        await _deliveryRepository.SaveAttemptStateAsync(state, cancellationToken);
     }
 }
