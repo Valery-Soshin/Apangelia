@@ -6,7 +6,7 @@ Read the existing code before changing it and keep edits scoped to the user's re
 
 This is a .NET solution with Aspire-style projects. Treat the projects as coordinated parts of the same application unless the task says otherwise.
 
-Do not introduce new frameworks, persistence layers, background job systems, or architectural layers unless the current task clearly needs them. When adding dependencies, explain why they are needed, especially for infrastructure packages. Keep package versions centralized in `Directory.Packages.props`.
+Do not introduce new frameworks, persistence layers, background job systems, or architectural layers unless the current task clearly needs them. When adding dependencies, explain why they are needed, especially for infrastructure packages. Keep common MSBuild settings in `Directory.Build.props` and package versions centralized in `Directory.Packages.props`; do not repeat target framework, nullable, implicit using, or package-version settings in individual project files unless that project intentionally differs.
 
 Use normal .NET configuration patterns: `appsettings*.json`, environment variables, dependency injection, and typed options when configuration grows beyond a one-off value. Do not log secrets or put secrets in committed config files.
 
@@ -50,17 +50,19 @@ If a `catch` block intentionally swallows an exception, include a concise Russia
 
 `Apangelia.ServiceDefaults` holds shared service-host defaults such as health checks, service discovery, HTTP resilience, logging, and OpenTelemetry. Reference it from runnable service projects that need those defaults, not from domain or infrastructure libraries.
 
-`Apangelia.WebApi` is the HTTP composition root. Keep routing, request/response concerns, OpenAPI setup, and endpoint registration here. The `Configurations` extension-method classes are the wiring layer for dependency injection, middleware, Swagger, Entity Framework, and endpoint mapping; keep business behavior out of them. Thin endpoints should delegate non-trivial webhook handling, validation, persistence, and integration work to `Apangelia.Application`.
+`Apangelia.WebApi` is the HTTP composition root. Keep routing, request/response concerns, OpenAPI setup, hosted worker registration, and endpoint registration here. The `Configurations` extension-method classes are the wiring layer for dependency injection, middleware, Swagger, Entity Framework, and endpoint mapping; keep business behavior out of them. Thin endpoints should delegate non-trivial webhook handling, validation, persistence, and integration work to `Apangelia.Application`. Hosted services in WebApi may own host timing and startup concerns, but should stay thin: create scopes at singleton/background boundaries and delegate workflows to application commands/services or integration clients.
 
 `Apangelia.Application` is the use-case layer. Put application services, commands/queries, workflow orchestration, validation that is not HTTP-specific, and ports for persistence or external integrations here. It may depend on `Apangelia.Core`; keep it independent of ASP.NET Core, Aspire, concrete database providers, and external API SDKs.
 
-Use the shared command abstractions in `Apangelia.Application.Commands` for application commands. New command handlers should implement `ICommandHandler<TCommand, TResult>` and be invoked through `ICommandDispatcher` so pipeline behaviors can wrap them consistently. Do not add feature-specific handler interfaces just to call commands directly. Keep the dispatcher scoped; if a singleton or background worker needs to dispatch commands, create a service scope at that boundary and resolve the dispatcher inside it. Keep transaction handling inside the handler unless a task explicitly introduces a transaction pipeline behavior.
+Use the shared command abstractions in `Apangelia.Application.Shared.CommandBase` for application commands. New command handlers should implement `ICommandHandler<TCommand, TResult>` and be invoked through `ICommandDispatcher` so pipeline behaviors can wrap them consistently. Do not add feature-specific handler interfaces just to call commands directly. Keep the dispatcher scoped; if a singleton or background worker needs to dispatch commands, create a service scope at that boundary and resolve the dispatcher inside it. The dispatcher pipeline currently owns cross-cutting logging and transaction boundaries. Commands are transactional by default; implement `INonTransactionalCommand` only when the command deliberately manages smaller persistence boundaries itself, such as batch workers that complete one claimed item at a time.
 
 `Apangelia.Core` is the intended home for domain model, domain contracts, and business rules. Keep it independent of ASP.NET Core, Aspire, database providers, external API SDKs, and application orchestration unless there is a deliberate architectural change.
 
 `Apangelia.Integrations.GitHub` is the boundary for GitHub-specific behavior such as webhook payload models, signature verification, API clients, and GitHub mapping logic. Use it to implement application ports; keep GitHub details out of `Apangelia.Application` and `Apangelia.Core` except for neutral contracts or domain concepts.
 
-`Apangelia.Persistence.Postgres` is the boundary for PostgreSQL persistence. Keep EF Core `DbContext`, migrations, Npgsql mapping, and provider-specific storage code here, then expose them by implementing abstractions that `Apangelia.Application` can consume. Registration and migration application may be wired from `Apangelia.WebApi`, but `Apangelia.Application` and `Apangelia.Core` must not depend on EF Core or Npgsql.
+`Apangelia.Integrations.Telegram` is the boundary for Telegram-specific behavior such as Bot API clients, webhook receive models, webhook secret validation, webhook registration requests, and notification provider implementation. Use it to implement application ports; keep Telegram Bot API request/response details out of `Apangelia.Application` and `Apangelia.Core` except for neutral provider contracts or domain concepts.
+
+`Apangelia.Persistence.Postgres` is the boundary for PostgreSQL persistence. Keep EF Core `DbContext`, migrations, Npgsql mapping, and provider-specific storage code here, then expose them by implementing abstractions that `Apangelia.Application` can consume. Registration and migration application may be wired from `Apangelia.WebApi`, but `Apangelia.Application` and `Apangelia.Core` must not depend on EF Core or Npgsql. For notification delivery, keep PostgreSQL-specific queue claiming and locking SQL such as `FOR UPDATE SKIP LOCKED` in the Postgres repository, while delivery and attempt lifecycle decisions such as delivered, retry, and dead-letter transitions belong in Core/Application types.
 
 Do not edit existing EF Core migration files unless the migration was created in the current diff. For model changes after a migration already exists, create a separate migration and let `AppDbContextModelSnapshot` reflect the latest model.
 
@@ -72,7 +74,7 @@ Prefer dependency flow from hosts/adapters inward: `AppHost` composes services, 
 
 ## Verification
 
-For code changes, run the narrowest useful build or test command before finishing. If verification cannot be run, say why.
+For code changes, run the narrowest useful build or test command before finishing. Use `Apangelia.slnx` for solution-level builds; this repository does not use a `.sln` file. If verification cannot be run, say why.
 
 For docs-only changes to this file, inspect `git diff -- AGENTS.md` and run `git diff --check`; a build is not required unless code or project files were also changed.
 
