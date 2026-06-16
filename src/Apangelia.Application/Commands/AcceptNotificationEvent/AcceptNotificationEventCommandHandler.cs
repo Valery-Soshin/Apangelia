@@ -2,7 +2,7 @@ using Apangelia.Application.Repositories;
 using Apangelia.Application.SeedWork;
 using Apangelia.Core;
 
-namespace Apangelia.Application.Commands.Notifications;
+namespace Apangelia.Application.Commands.AcceptNotificationEvent;
 
 /// <summary>
 /// Стандартный обработчик команды приема нормализованного события уведомления.

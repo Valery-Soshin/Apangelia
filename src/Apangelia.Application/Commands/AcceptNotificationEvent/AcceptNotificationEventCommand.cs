@@ -1,7 +1,7 @@
 using Apangelia.Application.SeedWork;
 using Apangelia.Core;
 
-namespace Apangelia.Application.Commands.Notifications;
+namespace Apangelia.Application.Commands.AcceptNotificationEvent;
 
 /// <summary>
 /// Команда приема нормализованного события уведомления из внешней интеграции.

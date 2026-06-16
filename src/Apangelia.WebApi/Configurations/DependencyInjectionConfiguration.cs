@@ -1,4 +1,5 @@
-using Apangelia.Application.Commands.Notifications;
+using Apangelia.Application.Commands.AcceptNotificationEvent;
+using Apangelia.Application.Commands.ProcessNotificationDeliveryBatch;
 using Apangelia.Application.GlobalBehaviors;
 using Apangelia.Application.Notifications;
 using Apangelia.Application.Repositories;
@@ -42,6 +43,7 @@ public static class DependencyInjectionConfiguration
         services.AddScoped(typeof(ICommandPipelineBehavior<,>), typeof(LoggingCommandPipelineBehavior<,>));
         services.AddScoped(typeof(ICommandPipelineBehavior<,>), typeof(TransactionCommandPipelineBehavior<,>));
         services.AddScoped<ICommandHandler<AcceptNotificationEventCommand, AcceptNotificationEventResult>, AcceptNotificationEventCommandHandler>();
+        services.AddScoped<ICommandHandler<ProcessNotificationDeliveryBatchCommand, int>, ProcessNotificationDeliveryBatchCommandHandler>();
         services.AddScoped<INotificationProviderResolver, NotificationProviderResolver>();
         services.AddScoped<NotificationDeliveryProcessor>();
 

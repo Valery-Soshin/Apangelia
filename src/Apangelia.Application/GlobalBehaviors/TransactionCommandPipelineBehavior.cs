@@ -24,6 +24,11 @@ public sealed class TransactionCommandPipelineBehavior<TCommand, TResult>
         CommandHandlerDelegate<TResult> next,
         CancellationToken cancellationToken)
     {
+        if (command is INonTransactionalCommand)
+        {
+            return next();
+        }
+
         return _unitOfWork.ExecuteInTransactionAsync(_ => next(), cancellationToken);
     }
 }

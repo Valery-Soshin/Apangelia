@@ -1,4 +1,4 @@
-using Apangelia.Application.Notifications;
+using Apangelia.Application.Commands.ProcessNotificationDeliveryBatch;
 using Apangelia.Application.SeedWork;
 using Microsoft.Extensions.Options;
 
@@ -50,8 +50,11 @@ public sealed class NotificationDeliveryWorker : BackgroundService
         try
         {
             await using var scope = _scopeFactory.CreateAsyncScope();
-            var processor = scope.ServiceProvider.GetRequiredService<NotificationDeliveryProcessor>();
-            var processedCount = await processor.ProcessNextBatchAsync(stoppingToken);
+            var dispatcher = scope.ServiceProvider.GetRequiredService<ICommandDispatcher>();
+
+            var processedCount = await dispatcher.HandleAsync(
+                new ProcessNotificationDeliveryBatchCommand(),
+                stoppingToken);
 
             if (processedCount > 0)
             {
