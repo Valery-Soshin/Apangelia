@@ -11,7 +11,7 @@ var webapi = builder.AddProject<Projects.Apangelia_WebApi>("apangelia-webapi")
     .WaitFor(postgres);
 
 var githubSmee = builder.AddExecutable(
-    name: "smee-github",
+    name: "github-smee",
     command: "smee",
     workingDirectory: builder.AppHostDirectory,
     "-u", builder.Configuration["Smee:GithubFromUrl"]!,
@@ -19,7 +19,7 @@ var githubSmee = builder.AddExecutable(
     .WaitFor(webapi);
 
 var telegramSmee = builder.AddExecutable(
-    name: "smee-telegram",
+    name: "telegram-smee",
     command: "smee",
     workingDirectory: builder.AppHostDirectory,
     "-u", builder.Configuration["Smee:TelegramFromUrl"]!,
