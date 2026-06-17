@@ -34,6 +34,7 @@ public sealed class TelegramWebhookRegistrationWorker : IHostedService
         }
 
         var webhookUrl = new Uri(_webhookOptions.PublicUrl, UriKind.Absolute);
+
         var request = new TelegramWebhookRegistrationRequest(
             webhookUrl,
             _webhookOptions.AllowedUpdates,

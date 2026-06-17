@@ -56,8 +56,12 @@ public sealed class TelegramBotClient : ITelegramBotClient
     {
         try
         {
+            var telegramMethodUri = CreateMethodUri(methodName);
+
+            var url = telegramMethodUri.ToString();
+
             using var response = await _httpClient.PostAsJsonAsync(
-                CreateMethodUri(methodName),
+                telegramMethodUri,
                 request,
                 cancellationToken);
 
@@ -98,7 +102,7 @@ public sealed class TelegramBotClient : ITelegramBotClient
 
     private Uri CreateMethodUri(string methodName)
     {
-        return new Uri(_apiBaseUri, $"bot{_options.BotToken}/{methodName}");
+        return new Uri(_apiBaseUri, $"/bot{_options.BotToken}/{methodName}");
     }
 
     private static Uri CreateApiBaseUri(string apiBaseUrl)

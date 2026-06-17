@@ -21,7 +21,7 @@ public static class DependencyInjectionConfiguration
         services.AddGitHubIntegrationModule(configuration.GetSection("Integrations:GitHub"));
         services.AddTelegramIntegrationModule(configuration.GetSection("Integrations:Telegram"));
 
-        services.AddTelegramWebhookRegistrationWorker(configuration.GetSection("Integrations:Telegram:WebhookRegistration"));
+        services.AddTelegramWebhookRegistrationWorker(configuration.GetSection("BackgroundWorkers:TelegramWebhookRegistration"));
         services.AddNotificationDeliveryWorker(configuration.GetSection("BackgroundWorkers:NotificationDelivery"));
 
         return services;
